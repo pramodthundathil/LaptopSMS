@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Tech -{% block title %}{% endblock title %}</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <!-- Google Fonts Rajadhani -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- MDB -->
+    <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+
+    <!-- Custom Navbar Styles -->
+    <style>
+        * {
+            font-family: "Barlow Condensed", sans-serif !important;
+            font-weight: 500;
+            font-style: normal;
+            font-size:medium;
+        }
+
+        .admin-navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937 !important;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-brand:hover {
+            background: #f8fafc;
+            color: #2563eb !important;
+        }
+
+        .navbar-brand img {
+            margin-right: 0.75rem;
+            border-radius: 6px;
+        }
+
+        .navbar-brand .brand-icon {
+            background: #e11d48;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item-custom {
+            display: flex;
+            align-items: center;
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .nav-item-custom:hover {
+            background: #f1f5f9;
+            color: #1f2937;
+        }
+
+        .nav-item-custom.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .nav-item-custom i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        .right-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .time-filter {
+            background: #e11d48;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .time-filter:hover {
+            background: #be185d;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.1rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .notification-btn:hover {
+            background: #f1f5f9;
+            color: #1f2937;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .profile-avatar:hover {
+            background: #1d4ed8;
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .mobile-toggle:hover {
+            background: #f1f5f9;
+            color: #1f2937;
+        }
+
+        /* Dropdown Styles - FIXED VERSION */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            margin-top: 0.5rem;
+            min-width: 200px;
+            max-width: 280px;
+            padding: 0.5rem 0;
+            position: absolute;
+            top: 100%;
+            z-index: 1050;
+            /* Ensure dropdown stays within viewport */
+            transform: translateX(0);
+        }
+
+        /* Fix for right-aligned dropdowns */
+        .dropdown-menu-end {
+            right: 0;
+            left: auto;
+        }
+
+        /* Ensure dropdown doesn't overflow viewport */
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        /* Auto-adjust dropdown position if it would overflow */
+        .dropdown:last-child .dropdown-menu,
+        .dropdown-menu-end {
+            right: 0;
+            left: auto;
+            transform: translateX(0);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            width: 16px;
+            text-align: center;
+            color: #6b7280;
+            flex-shrink: 0;
+        }
+
+        .dropdown-item:hover {
+            background: #f8fafc;
+            color: #1f2937;
+        }
+
+        .dropdown-item.text-danger {
+            color: #dc2626;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-color: #e5e7eb;
+        }
+
+        .dropdown-header {
+            padding: 0.5rem 1rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .main-nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                border-top: 1px solid #e2e8f0;
+                padding: 1rem;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.25rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .main-nav.show {
+                display: flex;
+            }
+
+            .nav-item-custom {
+                justify-content: flex-start;
+                width: 100%;
+                padding: 0.75rem 1rem;
+            }
+
+            .right-section {
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e2e8f0;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            /* Mobile dropdown adjustments */
+            .dropdown-menu {
+                min-width: 180px;
+                max-width: calc(100vw - 2rem);
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .admin-navbar {
+                padding: 0.5rem 0;
+            }
+
+            .container-fluid {
+                padding: 0 1rem;
+            }
+
+            .navbar-brand {
+                font-size: 1rem;
+                padding: 0.25rem 0.5rem;
+            }
+
+            .brand-icon {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 0.9rem !important;
+            }
+
+            .time-filter {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .right-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+
+            .dropdown-menu {
+                max-width: calc(100vw - 1rem);
+                min-width: 160px;
+            }
+
+            .dropdown-header {
+                font-size: 0.8rem;
+                max-width: 150px;
+            }
+        }
+
+        /* Specific fix for profile dropdown positioning */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-dropdown .dropdown-menu {
+            right: 0;
+            left: auto;
+            min-width: 220px;
+        }
+
+        /* Additional viewport constraint for all dropdowns */
+        @media (max-width: 768px) {
+            .dropdown-menu {
+                max-width: 90vw;
+            }
+        }
+    </style>
+
+    <!-- Script to track window activity -->
+    <script src="{% static 'javascript/activity_tracker.js' %}"></script>
+</head>
+
+<body>
+    {% url 'dashboard' as dashboard %}
+    {% url 'inward' as inward %}
+    {% url 'inwardHistory' as inwardHistory %}
+    {% url 'Service' as Service %}
+    {% url 'serviceHistory' as serviceHistory %}
+    {% url 'deliveryHistory' as deliveryHistory %}
+    {% url 'team' as team %}
+
+    <header class="header sticky-top">
+        {% if user.is_authenticated %}
+        <nav class="navbar admin-navbar ">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <!-- Brand -->
+                    <a class="navbar-brand" href="{% url 'dashboard' %}">
+                        <div class="brand-icon">
+                            <i class="bi bi-bar-chart-steps"></i>
+                        </div>
+                        <span>Admin Panel</span>
+                    </a>
+
+                    <!-- Mobile Toggle -->
+                    <button class="mobile-toggle" type="button" onclick="toggleMobileNav()">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <!-- Main Navigation -->
+                    <div class="main-nav" id="mainNav">
+                        <a href="{% url 'dashboard' %}"
+                            class="nav-item-custom {% if request.path == dashboard %}active{% endif %}">
+                            <i class="bi bi-window-dash"></i>
+                            Dashboard
+                        </a>
+
+                        <a href="{% url 'inward' %}"
+                            class="nav-item-custom {% if request.path == inward %}active{% endif %}">
+                            <i class="bi bi-pc-display-horizontal"></i>
+                            Products Inward
+                        </a>
+
+                        <a href="{% url 'inwardHistory' %}"
+                            class="nav-item-custom {% if request.path == inwardHistory %}active{% endif %}">
+                            <i class="bi bi-clock-history"></i>
+                            Inward History
+                        </a>
+
+                        <a href="{% url 'serviceHistory' %}"
+                            class="nav-item-custom {% if request.path == serviceHistory %}active{% endif %}">
+                            <i class="bi bi-cpu-fill"></i>
+                            Service History
+                        </a>
+
+                        <a href="{% url 'deliveryHistory' %}"
+                            class="nav-item-custom {% if request.path == deliveryHistory %}active{% endif %}">
+                            <i class="bi bi-truck"></i>
+                            Delivery History
+                        </a>
+
+                        <a href="{% url 'team' %}"
+                            class="nav-item-custom {% if request.path == team %}active{% endif %}">
+                            <i class="bi bi-people-fill"></i>
+                            Team Members
+                        </a>
+
+                        <div class="dropdown">
+                            <button class="nav-item-custom dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                                More
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <h6 class="dropdown-header">Additional Options</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="{%url 'brands' %}"><i class="bi bi-apple"></i> Brands</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-bell"></i> Analytics</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-file-spreadsheet"></i> Reports</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-info-circle"></i> Help</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Right Section (Mobile) -->
+                        <div class="right-section d-lg-none">
+                           
+
+                            <div class="dropdown">
+                                <button class="notification-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <i class="bi bi-bell"></i>
+                                    <span class="notification-badge">3</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <h6 class="dropdown-header">Notifications</h6>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle"></i>System
+                                            update available</a></li>
+                                    <li><a class="dropdown-item" href="#"><i
+                                                class="fas fa-exclamation-triangle"></i>Server maintenance</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-check-circle"></i>Backup
+                                            completed</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="dropdown profile-dropdown">
+                                <div class="profile-avatar dropdown-toggle" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    {{ user.first_name.0|default:"A" }}
+                                </div>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <h6 class="dropdown-header">{{ user.get_full_name|default:user.username }}</h6>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person-bounding-box"></i>My Profile</a></li>
+                                    <!-- <li><a class="dropdown-item" href="{% url 'profile_update' user.id %}"><i
+                                                class="fas fa-cog"></i>Settings</a></li> -->
+                                    {% if user.is_superuser %}
+                                    <li><a class="dropdown-item" href="/admin"><i class="fas fa-shield-alt"></i>Admin
+                                            Panel</a></li>
+                                    {% endif %}
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Section (Desktop) -->
+                    <div class="right-section d-none d-lg-flex">
+                       
+
+                        <div class="dropdown">
+                            <button class="notification-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="bi bi-bell"></i>
+                                <span class="notification-badge">3</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <h6 class="dropdown-header">Notifications</h6>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle"></i>System update
+                                        available</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-exclamation-triangle"></i>Server
+                                        maintenance</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-check-circle"></i>Backup
+                                        completed</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="dropdown profile-dropdown">
+                            <div class="profile-avatar dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user.first_name.0|default:"A" }}
+                            </div>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <h6 class="dropdown-header">{{ user.get_full_name|default:user.username }}</h6>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i>My
+                                        Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'profile_update' user.id %}"><i
+                                            class="fas fa-cog"></i>Settings</a></li>
+                                {% if user.is_superuser %}
+                                <li><a class="dropdown-item" href="/admin"><i class="fas fa-shield-alt"></i>Admin
+                                        Panel</a></li>
+                                {% endif %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
+                                            class="fas fa-sign-out-alt"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        {% endif %}
+    </header>
+
+    <!-- Start your project here-->
+    {% block body %}
+
+    {% endblock body %}
+    <!-- End your project here-->
+
+    <!-- MDB -->
+    {% block script %}
+    <script type="text/javascript" src="{% static 'javascript/mdb.umd.min.js' %}"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function toggleMobileNav() {
+            const nav = document.getElementById('mainNav');
+            nav.classList.toggle('show');
+        }
+
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', function (e) {
+            const nav = document.getElementById('mainNav');
+            const toggle = document.querySelector('.mobile-toggle');
+
+            if (!nav.contains(e.target) && !toggle.contains(e.target)) {
+                nav.classList.remove('show');
+            }
+        });
+
+        // Auto-adjust dropdown position to prevent overflow
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropdowns = document.querySelectorAll('.dropdown');
+
+            dropdowns.forEach(dropdown => {
+                const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+                const trigger = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+
+                if (trigger && dropdownMenu) {
+                    trigger.addEventListener('click', function () {
+                        setTimeout(() => {
+                            const rect = dropdownMenu.getBoundingClientRect();
+                            const viewportWidth = window.innerWidth;
+
+                            // If dropdown overflows to the right, adjust position
+                            if (rect.right > viewportWidth) {
+                                dropdownMenu.classList.add('dropdown-menu-end');
+                                dropdownMenu.style.right = '0';
+                                dropdownMenu.style.left = 'auto';
+                            }
+                        }, 10);
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- Main Script link -->
+    <script src="{% static 'javascript/main.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    {% endblock script %}
+
+    {% block sweet_alert %}
+    <script>
+        {% for message in messages %}
+        {% if message.tags == 'error' %}
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "{{message}}",
+            footer: '<a href="{% url 'login' %}">Try Again</a>'
+        });
+        {% elif message.tags == 'success' %}
+        Swal.fire({
+            icon: "success",
+            title: "{{message}}",
+            showConfirmButton: false,
+            timer: 3000
+        });
+        {% elif message.tags == 'info' %}
+        Swal.fire({
+            icon: "info",
+            title: "{{message}}",
+            timer: 2500
+        });
+        {% endif %}
+        {% endfor %}
+    </script>
+    {% endblock sweet_alert %}
+
+</body>
+
+</html>

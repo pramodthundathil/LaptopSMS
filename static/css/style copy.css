@@ -1,0 +1,54 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a{
+    text-decoration: none;
+    color: #424040;
+    outline: none;
+    border: none;
+}
+
+/* Navbar CSS */
+header .navbar ul li{
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 2rem;
+}
+
+header .navbar ul li a:hover{
+    text-decoration: none;
+    background-color: #198FCE;
+    color: #fff;
+}
+
+.nav-item a.active {
+    background-color: #007bff;
+    color: #ffffff; 
+    font-weight: bold; 
+}
+
+/* forms css */
+
+form .form-outline input, label{
+    font-size: 1.2rem;
+}
+
+
+.box {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+.box-content {
+    display: inline-block;
+    background-color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    font-weight: 600;
+}

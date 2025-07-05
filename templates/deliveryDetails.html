@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}Product Inward{% endblock title %}
+
+{% block body %}
+<section class="inward-sts">
+    <div class="container-fluid p-5">
+        <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4 mt-4">Delivery Details</p>
+        <div class="container-fluid border shadow rounded-5 p-4">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-gears fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Service Id :</strong> <span class="box-content">{{ delivery.service.service_id }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-share-from-square fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Inward Id :</strong> <span class="box-content">{{ delivery.service.product.id }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-microchip fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Service Technician :</strong> <span class="box-content">{{ delivery.service.product.id }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-laptop fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Brand:</strong> <span class="box-content">{{ delivery.service.product.brand }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-arrow-right fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Model:</strong> <span class="box-content">{{ delivery.service.product.model }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-hashtag fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Product Serial No:</strong> <span class="box-content">{{ delivery.service.product.serialNo }}</span></p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Problem:</strong> <span class="box-content">{{ delivery.service.product.problem }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Remark:</strong> <span class="box-content">{{ delivery.service.product.remark }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Component Used:</strong> <span class="box-content">{{ delivery.service.component }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-screwdriver-wrench fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Service Remark:</strong> <span class="box-content">{{ delivery.service.serviceRemark }}</span></p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-money-bill-wave fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Service Cost (INR):</strong> <span class="box-content">{{ delivery.service.serviceCost }}</span></p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-calendar-days fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Date of Inward:</strong> <span class="box-content bg-warning text-white">{{ delivery.service.product.inwardDate }}</span></p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Customer Name :</strong> <span class="box-content">{{ delivery.service.product.customer.customerName }}</span></p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Customer Email :</strong> <span class="box-content">{{ delivery.service.product.id }}</span></p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Customer Mobile No :</strong> <span class="box-content">{{ delivery.service.product.model }}</span></p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-4">
+                            <i class="fa-solid fa-hashtag fa-lg me-3 fa-fw"></i>
+                            <div class="flex-fill mb-0">
+                                <p><strong>Customer Address :</strong> <span class="box-content">{{ delivery.service.product.customer.customerAddress }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=" d-flex justify-content-center align-items-center">
+                        <i class="fa-regular fa-clock fa-lg me-3 fa-fw"></i>
+                        <strong>Delivered on or Before Delivery Date ?</strong>
+                        <div class="mx-3 rounded px-3 py-1{% if delivery.deliveredOnTime == 'Yes' %} bg-success {% else %} bg-danger {% endif %}">
+                            <p style="font-size: 1.2rem; font-weight: 600;" class="text-white p-0 m-0">{% if delivery.deliveredOnTime == 'Yes' %} Yes {% else %} No {% endif %}</p>
+                        </div>
+                    </div>
+                    <div class=" d-flex justify-content-center align-items-center my-5">
+                        <i class="fa-regular fa-face-laugh fa-lg me-3 fa-fw"></i>
+                        <strong>Customer Satisfacion ?</strong>
+                        <div class="form-check ms-5 d-flex align-items-center">
+                            {% if delivery.customerSatisfaction == 'Satisfied' %}
+                            <i class="fa-regular fa-face-smile-beam rounded-circle bg-success" style="font-size: 40px; color: white; border: 1px solid black;"></i>
+                            <strong class="border border-success p-2 rounded-pill m-0 mx-4">{{delivery.customerSatisfaction}}</strong>
+                            {% elif delivery.customerSatisfaction == 'Neutral' %}
+                            <i class="fa-regular fa-face-meh rounded-circle bg-warning" style="font-size: 40px; color: white; border: 1px solid black;"></i>
+                            <strong class="border border-warning p-2 rounded-pill m-0 mx-4">{{delivery.customerSatisfaction}}</strong>
+                            {% else %}
+                            <i class="fa-regular fa-face-frown rounded-circle bg-danger" style="font-size: 40px; color: white; border: 1px solid black;"></i>
+                            <strong class="border border-danger p-2 rounded-pill m-0 mx-4">{{delivery.customerSatisfaction}}</strong>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a href="{% url 'deliveryHistory' %}"  class="btn btn-primary text-white">Delivery History</a>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary text-white">Dashboard</a>
+                    </div>
+                </div>
+        </div>
+    </div>
+</section>
+{% endblock body %}

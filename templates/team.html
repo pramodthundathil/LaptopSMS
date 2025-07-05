@@ -1,0 +1,434 @@
+{% extends 'base.html' %}
+{% block title %}Our Team{% endblock title %}
+
+{% block body %}
+
+<section class="team">
+    <div class="container-fluid p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-primary">
+                <i class="bi bi-people-fill me-2"></i>Staff Management
+            </h2>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeModal" onclick="openAddModal()">
+                <i class="bi bi-person-plus-fill me-2"></i>Add Employee
+            </button>
+        </div>
+        
+        <!-- Employee Data Table -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-table me-2"></i>Employee Dashboard
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="employeeTable" class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th><i class="bi bi-hash me-1"></i>EID</th>
+                                <th><i class="bi bi-person me-1"></i>Name</th>
+                                <th><i class="bi bi-envelope me-1"></i>Email</th>
+                                <th><i class="bi bi-phone me-1"></i>Mobile</th>
+                                <th><i class="bi bi-calendar me-1"></i>DOB</th>
+                                <th><i class="bi bi-briefcase me-1"></i>Position</th>
+                                <th><i class="bi bi-currency-dollar me-1"></i>Salary</th>
+                                <th><i class="bi bi-check-circle me-1"></i>Status</th>
+                                <th><i class="bi bi-gear me-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emp in employees %}
+                            <tr>
+                                <td>{{ emp.id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center text-white me-2">
+                                            {{ emp.empName|first|upper }}
+                                        </div>
+                                        {{ emp.empName }}
+                                    </div>
+                                </td>
+                                <td>{{ emp.empEmail }}</td>
+                                <td>{{ emp.empMobNo }}</td>
+                                <td>{{ emp.empDOB|date:'d M Y' }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ emp.position }}</span>
+                                </td>
+                                <td>₹{{ emp.salary|floatformat:0 }}</td>
+                                <td>
+                                    {% if emp.is_active %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Active
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Inactive
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not emp.is_active %}
+                                        <button onclick="confirmActivate({{ emp.id }})" class="btn btn-sm btn-success" title="Activate">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                        </button>
+                                    {% else %}
+                                        <button onclick="openEditModal({{ emp.id }}, '{{ emp.empName }}', '{{ emp.empEmail }}', '{{ emp.empMobNo }}', '{{ emp.empDOB|date:'Y-m-d' }}', {{ emp.salary }}, '{{ emp.position }}', {{ emp.empTerms|yesno:'true,false' }})" class="btn btn-sm btn-warning me-1" title="Edit">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button onclick="confirmDelete({{ emp.id }})" class="btn btn-sm btn-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Employee Modal -->
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="employeeModalLabel">
+                    <i class="bi bi-person-plus me-2"></i>Add Employee
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="employeeForm" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="empName" class="form-label">
+                                    <i class="bi bi-person me-2"></i>Employee Name
+                                </label>
+                                <input type="text" class="form-control" id="empName" name="empName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="empEmail" class="form-label">
+                                    <i class="bi bi-envelope me-2"></i>Email
+                                </label>
+                                <input type="email" class="form-control" id="empEmail" name="empEmail" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="empMobNo" class="form-label">
+                                    <i class="bi bi-phone me-2"></i>Mobile Number
+                                </label>
+                                <input type="number" class="form-control" id="empMobNo" name="empMobNo" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="empDOB" class="form-label">
+                                    <i class="bi bi-calendar me-2"></i>Date of Birth
+                                </label>
+                                <input type="date" class="form-control" id="empDOB" name="empDOB" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="salary" class="form-label">
+                                    <i class="bi bi-currency-dollar me-2"></i>Salary
+                                </label>
+                                <input type="number" class="form-control" id="salary" name="salary" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="position" class="form-label">
+                                    <i class="bi bi-briefcase me-2"></i>Position
+                                </label>
+                                <select class="form-select" id="position" name="position" required>
+                                    <option value="">Select Position</option>
+                                    <option value="Laptop Technician">Laptop Technician</option>
+                                    <option value="Computer Technician">Computer Technician</option>
+                                    <option value="Chip-level Technician">Chip-level Technician</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Other Staff">Other Staff</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" id="passwordSection">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-lock me-2"></i>Password
+                                </label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">
+                                    <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                                </label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="empTerms" name="empTerms" required>
+                            <label class="form-check-label" for="empTerms">
+                                <i class="bi bi-shield-check me-2"></i>
+                                I agree to all statements in <a href="#" class="text-primary">Terms of Service</a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="bi bi-check-circle me-2"></i>Add Employee
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Load jQuery first -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Load DataTables after jQuery -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.table th {
+    background-color: #495057;
+    color: white;
+    font-weight: 500;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.btn {
+    border-radius: 6px;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.375rem 0.75rem;
+    margin-left: 0.125rem;
+    border-radius: 0.25rem;
+}
+
+.dataTables_wrapper .dataTables_info {
+    padding-top: 0.75rem;
+}
+</style>
+
+<script>
+let currentEmployeeId = null;
+let isEditMode = false;
+
+// Simple initialization without complex loading
+$(document).ready(function() {
+    console.log('Document ready, jQuery version:', $().jquery);
+    
+    // Simple timeout to ensure everything is loaded
+    setTimeout(function() {
+        console.log('Attempting to initialize DataTable...');
+        
+        if (typeof $.fn.DataTable !== 'undefined') {
+            try {
+                $('#employeeTable').DataTable({
+                    "pageLength": 10,
+                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    "order": [[0, 'desc']],
+                    "columnDefs": [
+                        { "orderable": false, "targets": [8] }
+                    ],
+                    "language": {
+                        "search": "Search employees:",
+                        "lengthMenu": "Show _MENU_ entries",
+                        "info": "Showing _START_ to _END_ of _TOTAL_ employees"
+                    }
+                });
+                console.log('DataTable initialized successfully');
+            } catch (error) {
+                console.error('DataTable initialization error:', error);
+            }
+        } else {
+            console.error('DataTable not available');
+        }
+    }, 1000);
+
+    // Handle form submission
+    $('#employeeForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const url = isEditMode ? `/team/${currentEmployeeId}/` : '/team/';
+        
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('#employeeModal').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: isEditMode ? 'Employee updated successfully!' : 'Employee added successfully!',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Form submission error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Something went wrong. Please try again.',
+                });
+            }
+        });
+    });
+});
+
+function openAddModal() {
+    isEditMode = false;
+    currentEmployeeId = null;
+    
+    document.getElementById('employeeForm').reset();
+    document.getElementById('employeeModalLabel').innerHTML = '<i class="bi bi-person-plus me-2"></i>Add Employee';
+    document.getElementById('submitBtn').innerHTML = '<i class="bi bi-check-circle me-2"></i>Add Employee';
+    document.getElementById('passwordSection').style.display = 'block';
+    document.getElementById('password').required = true;
+    document.getElementById('confirm_password').required = true;
+    document.getElementById('employeeForm').action = '/team/';
+}
+
+function openEditModal(id, name, email, mobile, dob, salary, position, terms) {
+    isEditMode = true;
+    currentEmployeeId = id;
+    
+    document.getElementById('empName').value = name;
+    document.getElementById('empEmail').value = email;
+    document.getElementById('empMobNo').value = mobile;
+    document.getElementById('empDOB').value = dob;
+    document.getElementById('salary').value = salary;
+    document.getElementById('position').value = position;
+    document.getElementById('empTerms').checked = terms === 'true';
+    
+    document.getElementById('employeeModalLabel').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Edit Employee';
+    document.getElementById('submitBtn').innerHTML = '<i class="bi bi-check-circle me-2"></i>Update Employee';
+    document.getElementById('passwordSection').style.display = 'none';
+    document.getElementById('password').required = false;
+    document.getElementById('confirm_password').required = false;
+    document.getElementById('employeeForm').action = `/team/${id}/`;
+    
+    $('#employeeModal').modal('show');
+}
+
+function confirmDelete(employeeId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will deactivate the employee account!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, deactivate!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/inactive_employee/${employeeId}/`;
+        }
+    });
+}
+
+function confirmActivate(empId) {
+    Swal.fire({
+        title: 'Activate Employee?',
+        text: "This will reactivate the employee account!",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, activate!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/activate_employee/${empId}/`;
+        }
+    });
+}
+
+// Display messages from Django
+{% if messages %}
+    {% for message in messages %}
+        Swal.fire({
+            icon: "{{ message.tags }}",
+            title: "{{ message.tags|title }}",
+            text: "{{ message }}",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    {% endfor %}
+{% endif %}
+</script>
+
+{% endblock body %}

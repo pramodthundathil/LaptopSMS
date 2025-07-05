@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Inward History{% endblock title %}
+
+{% block body %}
+<section class="Inward-history">
+    <div class="container-fluid p-5">
+        <div class="row">
+            <div class="col-lg-9">
+                <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4 mt-4">Inward History</p>
+            </div>
+            <div class="col-lg-3 d-flex align-items-center">
+                <div class="input-group">
+                    <div class="form-outline" data-mdb-input-init style="width: 70%;">
+                        <input type="search" id="form1" class="form-control" />
+                        <label class="form-label" for="form1">Search</label>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-mdb-ripple-init>
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid border Larger shadow rounded-5">
+            <div class="row">
+                <div class="col-lg-12 rounded-end-4">   
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Inward ID</th>
+                                <th>Product Serial No.</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Problem</th>
+                                <th>Date of Inward</th>
+                                <th>Status</th>
+                                <th>Date of Commitment</th>
+                                <th>Customer Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employee-table-body">
+                            {% for i in product_inward %}
+                            <tr>
+                                <td>{{i.id}}</td>
+                                <td>{{i.serialNo}}</td>
+                                <td>{{i.brand}}</td>
+                                <td>{{i.model}}</td>
+                                <td>{{i.problem}}</td>
+                                <td>{{i.inwardDate}}</td>
+                                <td><span class="badge rounded-pill d-inline p-2 {% if i.productStatus == 'Inwarded' %}badge-danger {% elif i.productStatus == 'In Service' %} badge-warning {% else %} badge-success {% endif %}">{{i.productStatus}}</span></td>
+                                <td>{{i.commitmentDate}}</td>
+                                <td>{{i.customer.customerName}}</td>
+                                <td>
+                                    <a href="{% url 'inward_detail' pid=i.id %}" class="btn btn-sm btn-primary me-1">View Details</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock body %}

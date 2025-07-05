@@ -1,0 +1,374 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock title %}
+
+{% block body %}
+<style>
+    body {
+        background: whitesmoke;
+        min-height: 100vh;
+        color: #252526;
+    }
+    
+    .dashboard {
+        background: transparent;
+    }
+    
+    .datetime-badge {
+        background: rgba(37, 100, 235, 0.88);
+        border: 1px solid rgba(9, 49, 136, 0.623);
+        /* backdrop-filter: blur(10px); */
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 12px 24px;
+        border-radius: 50px;
+        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.25);
+    }
+    
+    .dashboard-title {
+        font-weight: 700;
+        font-size: 3rem;
+        background: linear-gradient(135deg, #ffffff, #e2e8f0);
+        -webkit-background-clip: text;
+        /* -webkit-text-fill-color: transparent; */
+        background-clip: text;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .metric-card {
+        background: white;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        backdrop-filter: blur(15px);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        height: 100%;
+    }
+    
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #e13359, #c33654c8);
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+        border-color: rgba(37, 99, 235, 0.4);
+    }
+    
+    .metric-card a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+    
+    .card-body {
+        padding: 2rem;
+        position: relative;
+    }
+    
+    .metric-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color:#252526;
+        margin-bottom: 1rem;
+    }
+    
+    .metric-value {
+        font-weight: 700;
+        font-size: 2.5rem;
+        color: #2563eb;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .status-badge {
+        background: rgba(37, 99, 235, 0.2);
+        border: 1px solid rgba(37, 99, 235, 0.3);
+        color: #ffffff;
+        padding: 8px 16px;
+        border-radius: 25px;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    
+    .status-poor {
+        background: rgba(92, 3, 3, 0.887);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+    
+    .status-moderate {
+        background: rgba(245, 159, 11, 0.932);
+        border-color: rgba(109, 70, 3, 0.733);
+    }
+    
+    .status-great {
+        background: rgba(6, 101, 41, 0.723);
+        border-color: rgba(6, 71, 30, 0.736);
+    }
+    
+    .satisfaction-card {
+        background: white;
+        border: 1px solid rgba(37, 99, 235, 0.3);
+        backdrop-filter: blur(15px);
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .satisfaction-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        /* background: linear-gradient(90deg, #2563eb, #3b82f6); */
+         background: linear-gradient(90deg, #e13359, #c33654c8);
+    }
+    
+    .satisfaction-icon {
+        font-size: 40px;
+        padding: 10px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .revenue-card {
+        background: white;
+        border: 2px solid rgba(37, 99, 235, 0.4);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .revenue-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 30px rgba(37, 99, 235, 0.15);
+    }
+    
+    .revenue-value {
+        font-weight: 700;
+        font-size: 2.2rem;
+        color: #2563eb;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        border: none;
+        padding: 12px 32px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    }
+    
+    .metrics-card {
+        background: white;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        backdrop-filter: blur(15px);
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .metrics-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        /* background: linear-gradient(90deg, #2563eb, #3b82f6); */
+         background: linear-gradient(90deg, #e13359, #c33654c8);
+
+    }
+    
+    .metrics-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: #2563eb;
+        margin-bottom: 1.5rem;
+    }
+    
+    .metrics-item {
+        color: #1d4ed8;
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .metrics-item strong {
+        color:#252526;
+        font-weight: 600;
+    }
+</style>
+
+<section class="dashboard">
+    <div class="container-fluid p-5">
+        <div class="text-center mb-4">
+            <span class="datetime-badge" id="date-time"></span>
+        </div>
+        <p class="text-center dashboard-title mb-5">Service Center Dashboard</p>
+        
+        <div class="row g-4">
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <a href="{% url 'inwardHistory' %}">
+                        <div class="card-body text-center">
+                            <h5 class="metric-title">Inwarded Laptops</h5>
+                            <p class="metric-value">{{product_inward_count}}</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <a href="{% url 'inwardHistory' %}">
+                        <div class="card-body text-center">
+                            <h5 class="metric-title">Pending for Service</h5>
+                            <p class="metric-value">{{pendingService_count}}</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <a href="{% url 'serviceHistory' %}">
+                        <div class="card-body text-center">
+                            <h5 class="metric-title">Laptops in Service</h5>
+                            <p class="metric-value">{{servicePending}}</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <div class="card-body text-center">
+                        <h5 class="metric-title">Total Serviced Laptops</h5>
+                        <p class="metric-value">{{serviceDone}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <div class="card-body text-center">
+                        <h5 class="metric-title">Laptops Delivered</h5>
+                        <p class="metric-value">{{ count_deliveries }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <div class="card-body text-center">
+                        <h5 class="metric-title">Inward to Service Conversion (%)</h5>
+                        <p class="metric-value">{{ inward_to_service }}%</p>
+                        {% if inward_to_service <= 40 %}
+                        <span class="status-badge status-poor">Poor Performance</span>
+                        {% elif inward_to_service > 40 and inward_to_service <= 50 %}
+                        <span class="status-badge status-moderate">Moderate Performance</span>
+                        {% else %}
+                        <span class="status-badge status-great">Great Performance</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-4">
+            <div class="col-lg-6 col-md-12">
+                <div class="satisfaction-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="metric-title mb-0">Customer Satisfaction</h5>
+                            
+                            {% if customer_satisfaction > 60 %}
+                            <!-- <i class="fa-regular fa-face-smile-beam "></i> -->
+                            <i class="bi bi-emoji-smile-fill satisfaction-icon bg-success"></i>
+                            {% elif customer_satisfaction > 30 and customer_satisfaction <= 60 %}
+                            <i class="fa-regular fa-face-meh satisfaction-icon bg-warning"></i>
+                            {% else %}
+                            <i class="fa-regular fa-face-frown satisfaction-icon bg-danger"></i>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="metric-value">{{customer_satisfaction}}%</p>
+                            
+                            {% if customer_satisfaction > 60 %}
+                            <span class="status-badge status-great">Great...Keep it Up...!</span>
+                            {% elif customer_satisfaction > 30 and customer_satisfaction <= 60 %}
+                            <span class="status-badge status-moderate">Moderate..Try to Improve...</span>
+                            {% else %}
+                            <span class="status-badge status-poor">Poor..Need Much More Improvement...</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="revenue-card">
+                    <div class="card-body text-center">
+                        <h5 class="metric-title">Daily Revenue</h5>
+                        <p class="revenue-value">Rs. {{ daily_revenue }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="revenue-card">
+                    <div class="card-body text-center">
+                        <h5 class="metric-title">Monthly Revenue</h5>
+                        <p class="revenue-value">Rs. {{monthly_revenue}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-3">
+            <div class="col-lg-6"></div>    
+            <div class="col-lg-6 d-flex justify-content-center align-items-center">
+                <a href="{% url 'revenueData' %}" class="btn btn-primary">Revenue Details</a>
+            </div>        
+        </div>
+
+        <div class="row g-4 mt-3">
+            <div class="col-lg-6 col-md-12">
+                <div class="metrics-card">
+                    <div class="card-body">
+                        <h5 class="metrics-title">Other Metrics</h5>
+                        <p class="metrics-item"><strong>Average Delivery Time:</strong> 12 hours</p>
+                        <p class="metrics-item"><strong>Parts on Order:</strong> 20</p>
+                        <p class="metrics-item"><strong>No. of Team Members:</strong> {{count_employee}}</p>
+                        <p class="metrics-item mb-0"><strong>Technician Performance:</strong> 85%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function updateDateTime() {
+        var now = new Date();
+        var date = now.toLocaleDateString();
+        var time = now.toLocaleTimeString();
+        document.getElementById('date-time').textContent = date + ' ' + time;
+    }
+
+    setInterval(updateDateTime, 1000); 
+    updateDateTime(); 
+</script>
+{% endblock body %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Revenue Details{% endblock title %}
+
+{% block body %}
+<section class="revenue-details">
+    <div class="container-fluid p-5">
+        <!-- Year and Month Filter -->
+        <div class="row mb-4">
+            <div class="col-lg-3">
+                <div class="input-group">
+                    <label for="yearSelect" class="input-group-text">Select Year:</label>
+                    <select class="form-select" id="yearSelect" onchange="applyFilter()">
+                        {% for year in years %}
+                        <option value="{{ year.year }}" {% if year.year == selected_year %}selected{% endif %}>{{ year.year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="input-group">
+                    <label for="monthSelect" class="input-group-text">Select Month:</label>
+                    <select class="form-select" id="monthSelect" onchange="applyFilter()">
+                        {% for month in months %}
+                        <option value="{{ month.month }}" {% if month.month == selected_month %}selected{% endif %}>
+                            {{ month|date:"F" }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Date-wise Revenue Data -->
+        <div class="row">
+            <div class="col-lg-12">
+                <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4 mt-4">Date-wise Revenue Details</p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Daily Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for revenue_entry in revenues %}
+                        <tr>
+                            <td>{{ revenue_entry.date }}</td>
+                            <td>Rs. {{ revenue_entry.daily_revenue }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center">No revenue data available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Total Monthly Revenue -->
+        <div class="row mt-4">
+            <div class="col-lg-12">
+                <p class="text-center h3 fw-bold mb-4 mx-1 mx-md-4 mt-4">Total Monthly Revenue: Rs. {{ total_monthly_revenue }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function applyFilter() {
+        const year = document.getElementById('yearSelect').value;
+        const month = document.getElementById('monthSelect').value;
+        window.location.href = `?year=${year}&month=${month}`;
+    }
+</script>
+{% endblock body %}

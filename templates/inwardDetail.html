@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+{% block title %}Product Inward{% endblock title %}
+
+{% block body %}
+<section class="inward-sts bg-light min-vh-100">
+    <div class="container py-5">
+        <!-- Header -->
+        <!-- <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary mb-2">Product Inward</h1>
+            <div class="mx-auto" style="width: 60px; height: 4px; background: linear-gradient(90deg, #e91e63, #1e3a8a);"></div>
+        </div> -->
+
+        <!-- Main Content Card -->
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-primary text-white py-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0 fw-bold">
+                            <i class="bi bi-box-seam me-2"></i>
+                            Product Information
+                        </h3>
+                    </div>
+                    <div class="col-auto">
+                        <span class="badge bg-light text-primary fs-6 px-3 py-2">
+                            ID: {{ product.serialNo }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-5">
+                <div class="row g-5">
+                    <!-- Product Details -->
+                    <div class="col-lg-6">
+                        <div class="h-100">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="bi bi-gear-fill"></i>
+                                </div>
+                                <h4 class="text-primary mb-0 fw-bold">Product Details</h4>
+                            </div>
+                            
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-primary text-white me-3">
+                                        <i class="bi bi-hash"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Serial Number</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.serialNo }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-primary text-white me-3">
+                                        <i class="bi bi-laptop"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Brand</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.brand }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-primary text-white me-3">
+                                        <i class="bi bi-device-ssd"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Model</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.model }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-danger text-white me-3">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Problem</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.problem }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-info text-white me-3">
+                                        <i class="bi bi-chat-left-text"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Remark</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.remark }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-card mb-4">
+                                        <div class="d-flex align-items-center p-3">
+                                            <div class="icon-sm bg-warning text-white me-3">
+                                                <i class="bi bi-calendar-date"></i>
+                                            </div>
+                                            <div class="flex-fill">
+                                                <label class="form-label text-muted mb-1 fw-medium">Inward Date</label>
+                                                <p class="mb-0 fw-bold text-warning">{{ product.inwardDate }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="divider"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-card mb-4">
+                                        <div class="d-flex align-items-center p-3">
+                                            <div class="icon-sm bg-info text-white me-3">
+                                                <i class="bi bi-calendar-check"></i>
+                                            </div>
+                                            <div class="flex-fill">
+                                                <label class="form-label text-muted mb-1 fw-medium">Commitment Date</label>
+                                                <p class="mb-0 fw-bold text-info">{{ product.commitmentDate }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="divider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Details -->
+                    <div class="col-lg-6">
+                        <div class="h-100">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <h4 class="text-primary mb-0 fw-bold">Customer Details</h4>
+                            </div>
+
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-primary text-white me-3">
+                                        <i class="bi bi-person-circle"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Customer Name</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.customer.customerName }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-primary text-white me-3">
+                                        <i class="bi bi-envelope-fill"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Email Address</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.customer.customerEmail }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-primary text-white me-3">
+                                        <i class="bi bi-telephone-fill"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Mobile Number</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.customer.customerMobNo }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <div class="info-card mb-4">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="icon-sm bg-primary text-white me-3">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                    </div>
+                                    <div class="flex-fill">
+                                        <label class="form-label text-muted mb-1 fw-medium">Address</label>
+                                        <p class="mb-0 fw-bold text-dark">{{ product.customer.customerAddress }}</p>
+                                    </div>
+                                </div>
+                                <div class="divider"></div>
+                            </div>
+
+                            <!-- Status Cards -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="status-card mb-4">
+                                        <div class="d-flex align-items-center p-3">
+                                            <div class="icon-sm bg-primary text-white me-3">
+                                                <i class="bi bi-tools"></i>
+                                            </div>
+                                            <div class="flex-fill">
+                                                <label class="form-label text-muted mb-1 fw-medium">Product Status</label>
+                                                <span class="badge 
+                                                {% if product.productStatus == 'Inwarded' %}
+                                                    bg-warning text-dark
+                                                {% elif product.productStatus == 'In Service' %}
+                                                    bg-info text-white
+                                                {% else %}
+                                                    bg-success text-white
+                                                {% endif %} fs-6 px-3 py-2">
+                                                    {{ product.productStatus }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="divider"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="status-card mb-4">
+                                        <div class="d-flex align-items-center p-3">
+                                            <div class="icon-sm bg-primary text-white me-3">
+                                                <i class="bi bi-check-circle"></i>
+                                            </div>
+                                            <div class="flex-fill">
+                                                <label class="form-label text-muted mb-1 fw-medium">Product Checked</label>
+                                                <span class="badge 
+                                                {% if product.productChecked == True %}
+                                                    bg-success text-white
+                                                {% else %}
+                                                    bg-danger text-white
+                                                {% endif %} fs-6 px-3 py-2">
+                                                    {{ product.productChecked | yesno:"Yes,No" }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="divider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card-footer bg-light py-4">
+                <div class="d-flex justify-content-center flex-wrap gap-3">
+                    <a class="btn btn-outline-primary btn-lg px-4 py-2" href="{% url 'inwardHistory' %}">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Inward History
+                    </a>
+                    
+                    {% if not product.productStatus == 'Delivered' %}    
+                    <a class="btn btn-primary btn-lg px-4 py-2" href="{% url 'inwardEdit' pid=product.id %}">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Details
+                    </a>
+                    <a class="btn btn-success btn-lg px-4 py-2" href="{% url 'service' pid=product.id %}">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Add to Service
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+:root {
+    --primary-color: #1e3a8a;
+    --secondary-color: #e91e63;
+    --light-gray: #f8f9fa;
+    --dark-gray: #6c757d;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #1e40af;
+    border-color: #1e40af;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.icon-sm {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.info-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.status-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+}
+
+.status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--secondary-color), transparent);
+    margin: 0 1rem;
+}
+
+.card {
+    border: none;
+}
+
+.card-header {
+    border-bottom: 3px solid var(--secondary-color);
+}
+
+.badge {
+    font-weight: 600;
+}
+
+.btn-lg {
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.form-label {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+    .icon-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .icon-sm {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .card-body {
+        padding: 2rem 1rem;
+    }
+}
+</style>
+{% endblock body %}

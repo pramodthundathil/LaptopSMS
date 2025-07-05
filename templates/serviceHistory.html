@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Service History{% endblock title %}
+
+{% block body %}
+<section class="service-history">
+    <div class="container-fluid p-5">
+        <div class="row">
+            <div class="col-lg-9">
+                <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4 mt-4">Service History</p>
+            </div>
+            <div class="col-lg-3 d-flex align-items-center">
+                <div class="input-group">
+                    <div class="form-outline" data-mdb-input-init style="width: 70%;">
+                        <input type="search" id="form1" class="form-control" />
+                        <label class="form-label" for="form1">Search</label>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-mdb-ripple-init>
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid border Larger shadow rounded-5">
+            <div class="row">
+                <div class="col-lg-12 rounded-end-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Service ID</th>
+                                <th>Inward ID</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Product Serial No.</th>
+                                <th>Problem</th>
+                                <th>Remark</th>
+                                <th>Date of Inward</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="service-table-body">
+                            {% for service in service %}
+                            <tr>
+                                <td>{{ service.service_id }}</td>
+                                <td>{{ service.product.id }}</td>
+                                <td>{{ service.product.brand }}</td>
+                                <td>{{ service.product.model }}</td>
+                                <td>{{ service.product.serialNo }}</td>
+                                <td>{{ service.product.problem }}</td>
+                                <td>{{ service.serviceRemark }}</td>
+                                <td>{{ service.product.inwardDate}}</td>
+                                <td>
+                                    <a href="{% url 'serviceDetails' service.id %}" class="btn btn-sm btn-primary me-1">View Service Details</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock body %}
