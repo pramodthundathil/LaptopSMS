@@ -399,6 +399,9 @@ def inwardDetail(request,pid):
 
 @login_required
 def inwardEdit(request,pid):
+    technician_positions = ['Laptop Technician', 'Computer Technician', 'Chip-level Technician']
+    technicians = Team.objects.filter(position__in=technician_positions, is_active=True)
+    brands = Brands.objects.all()
     product = get_object_or_404(ProductInward, id=pid)
     
     if request.method == "POST":
@@ -434,6 +437,8 @@ def inwardEdit(request,pid):
             
     context = {
         'product': product,
+        "technicians":technicians,
+        "brands":brands
     }
     return render(request, 'inwardEdit.html', context)
 

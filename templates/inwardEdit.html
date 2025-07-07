@@ -1,145 +1,610 @@
 {% extends 'base.html' %}
-{% block title %}Product Inward{% endblock title %}
+{% block title %}Edit Product Inward{% endblock title %}
 
 {% block body %}
-<section class="inward-sts">
-    <div class="container-fluid p-5">
-        <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4 mt-4">Product Inward</p>
-        <div class="container-fluid border Larger shadow rounded-5">
-            <div class="row">
-                <!-- Product Details Form -->
-                <div class="col-lg-5 rounded-start-4">
-                    <p class="text-center h4 fw-bold mb-4 mx-1 mx-md-4 mt-4">Product Inward Details</p>
-                    <form class="mx-1 mx-md-4" action="{% url 'inwardEdit' product.id %}" method="post">
-                        {% csrf_token %}
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-gears fa-lg me-3 fa-fw"></i>
-                            <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                                <input type="text" id="productSerial" class="form-control" required name="serialNo" value="{{product.serialNo}}"/>
-                                <label class="form-label" for="productSerial">Product Serial Number</label>
+<section class="inward-edit bg-light min-vh-100">
+    <div class="container py-5">
+        <!-- Header -->
+        <!-- <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-primary mb-2">Edit Product Inward</h1>
+            <div class="mx-auto" style="width: 80px; height: 4px; background: linear-gradient(90deg, #e91e63, #1e3a8a);"></div>
+            <p class="text-muted mt-3">Update product and customer information</p>
+        </div> -->
+
+        <!-- Main Content Card -->
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-primary text-white py-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0 fw-bold">
+                            <i class="bi bi-pencil-square me-2"></i>
+                            Edit Product Information
+                        </h3>
+                    </div>
+                    <div class="col-auto">
+                        <span class="badge bg-light text-primary fs-6 px-3 py-2">
+                            ID: {{ product.serialNo }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-5">
+                <form action="{% url 'inwardEdit' product.id %}" method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row g-5">
+                        <!-- Product Details Form -->
+                        <div class="col-lg-6">
+                            <div class="form-section">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="icon-circle bg-primary text-white me-3">
+                                        <i class="bi bi-gear-fill"></i>
+                                    </div>
+                                    <h4 class="text-primary mb-0 fw-bold">Product Details</h4>
+                                </div>
+
+                                <!-- Serial Number -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-hash"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="productSerial" 
+                                                   name="serialNo" 
+                                                   value="{{ product.serialNo }}" 
+                                                   required>
+                                            <label for="productSerial">Product Serial Number</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Brand -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-laptop"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <select class="form-select" id="productBrand" name="brand" required>
+                                                <option value="" disabled>Select Brand</option>
+                                                {% for brand in brands %}
+                                                <option value="{{ brand.name }}" {% if product.brand == brand.name %}selected{% endif %}>
+                                                    {{ brand.name }}
+                                                </option>
+                                                {% endfor %}
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <label for="productBrand">Brand</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Model -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-device-ssd"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="productModel" 
+                                                   name="model" 
+                                                   value="{{ product.model }}" 
+                                                   required>
+                                            <label for="productModel">Model</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Problem -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-danger text-white">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <textarea class="form-control" 
+                                                      id="productProblem" 
+                                                      name="problem" 
+                                                      style="height: 100px" 
+                                                      required>{{ product.problem }}</textarea>
+                                            <label for="productProblem">Problem Description</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Remark -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-info text-white">
+                                            <i class="bi bi-chat-left-text"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <textarea class="form-control" 
+                                                      id="productRemark" 
+                                                      name="remark" 
+                                                      style="height: 100px">{{ product.remark }}</textarea>
+                                            <label for="productRemark">Remark</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Commitment Date -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-warning text-dark">
+                                            <i class="bi bi-calendar-check"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <input type="date" 
+                                                   class="form-control" 
+                                                   id="commitmentDate" 
+                                                   name="commitmentDate" 
+                                                   value="{{ product.commitmentDate|date:'Y-m-d' }}" 
+                                                   required>
+                                            <label for="commitmentDate">Commitment Date</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-laptop fa-lg me-3 fa-fw"></i>
-                            <div class="form-outline flex-fill mb-0">
-                                <select id="productBrand" class="form-select" required name="brand">
-                                    <option value="" disabled {% if product.brand == "" %}selected{% endif %}>Select Brand</option>
-                                    <option value="Dell" {% if product.brand == "Dell" %}selected{% endif %}>Dell</option>
-                                    <option value="HP" {% if product.brand == "HP" %}selected{% endif %}>HP</option>
-                                    <option value="Lenovo" {% if product.brand == "Lenovo" %}selected{% endif %}>Lenovo</option>
-                                    <option value="Apple" {% if product.brand == "Apple" %}selected{% endif %}>Apple</option>
-                                    <option value="Asus" {% if product.brand == "Asus" %}selected{% endif %}>Asus</option>
-                                    <option value="Acer" {% if product.brand == "Acer" %}selected{% endif %}>Acer</option>
-                                    <option value="MSI" {% if product.brand == "MSI" %}selected{% endif %}>MSI</option>
-                                    <option value="Samsung" {% if product.brand == "Samsung" %}selected{% endif %}>Samsung</option>
-                                    <option value="Sony" {% if product.brand == "Sony" %}selected{% endif %}>Sony</option>
-                                    <option value="Toshiba" {% if product.brand == "Toshiba" %}selected{% endif %}>Toshiba</option>
-                                    <option value="LG" {% if product.brand == "LG" %}selected{% endif %}>LG</option>
-                                    <option value="Fujitsu" {% if product.brand == "Fujitsu" %}selected{% endif %}>Fujitsu</option>
-                                    <option value="Huawei" {% if product.brand == "Huawei" %}selected{% endif %}>Huawei</option>
-                                    <option value="Google" {% if product.brand == "Google" %}selected{% endif %}>Google</option>
-                                    <option value="Microsoft" {% if product.brand == "Microsoft" %}selected{% endif %}>Microsoft</option>
-                                    <option value="Gateway" {% if product.brand == "Gateway" %}selected{% endif %}>Gateway</option>
-                                    <option value="Xiaomi" {% if product.brand == "Xiaomi" %}selected{% endif %}>Xiaomi</option>
-                                    <option value="Realme" {% if product.brand == "Realme" %}selected{% endif %}>Realme</option>
-                                    <option value="Razer" {% if product.brand == "Razer" %}selected{% endif %}>Razer</option>
-                                    <option value="Compaq" {% if product.brand == "Compaq" %}selected{% endif %}>Compaq</option>
-                                    <option value="Other"  >Other</option>
-                                </select>
+
+                        <!-- Customer Details Form -->
+                        <div class="col-lg-6">
+                            <div class="form-section">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="icon-circle bg-primary text-white me-3">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <h4 class="text-primary mb-0 fw-bold">Customer Details</h4>
+                                </div>
+
+                                <!-- Customer Name -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-person-circle"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="customerName" 
+                                                   name="customerName" 
+                                                   value="{{ product.customer.customerName }}" 
+                                                   required>
+                                            <label for="customerName">Customer Name</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customer Email -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-envelope-fill"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <input type="email" 
+                                                   class="form-control" 
+                                                   id="customerEmail" 
+                                                   name="customerEmail" 
+                                                   value="{{ product.customer.customerEmail }}">
+                                            <label for="customerEmail">Email Address</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customer Mobile -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-telephone-fill"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <input type="tel" 
+                                                   class="form-control" 
+                                                   id="customerMobile" 
+                                                   name="customerMobNo" 
+                                                   value="{{ product.customer.customerMobNo }}" 
+                                                   required>
+                                            <label for="customerMobile">Mobile Number</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customer Address -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <textarea class="form-control" 
+                                                      id="customerAddress" 
+                                                      name="customerAddress" 
+                                                      style="height: 120px" 
+                                                      required>{{ product.customer.customerAddress }}</textarea>
+                                            <label for="customerAddress">Address</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Product Status -->
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-tools"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <select class="form-select" id="productStatus" name="productStatus" required>
+                                                <option value="" disabled>Select Status</option>
+                                                <option value="Inwarded" {% if product.productStatus == 'Inwarded' %}selected{% endif %}>
+                                                    Inwarded
+                                                </option>
+                                                <option value="In Service" {% if product.productStatus == 'In Service' %}selected{% endif %}>
+                                                    In Service
+                                                </option>
+                                            </select>
+                                            <label for="productStatus">Product Status</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Technician (conditionally shown) -->
+                                <div class="form-group mb-4" id="technicianDiv" style="display: none;">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-success text-white">
+                                            <i class="bi bi-person-gear"></i>
+                                        </span>
+                                        <div class="form-floating">
+                                            <select class="form-select" id="productTechnician" name="technician">
+                                                <option value="" disabled selected>Select Technician</option>
+                                                {% for technician in technicians %}
+                                                <option value="{{ technician.id }}" 
+                                                        {% if product.service.serviceTechnician.id == technician.id %}selected{% endif %}>
+                                                    {{ technician.empName }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="productTechnician">Assigned Technician</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Product Checked -->
+                                <div class="form-group mb-4">
+                                    <div class="form-check form-switch p-3 bg-light rounded-3">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               id="productChecked" 
+                                               name="productChecked" 
+                                               {% if product.productChecked %}checked{% endif %}>
+                                        <label class="form-check-label fw-medium" for="productChecked">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            Product Checked
+                                        </label>
+                                        <div class="form-text text-danger mt-2">
+                                            <i class="bi bi-exclamation-circle me-1"></i>
+                                            If any scratches, marks, or damages are found, please mention them in the remarks section.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-center flex-wrap gap-3">
                                 
+                                <button type="reset" class="btn btn-outline-warning btn-lg px-4 py-2">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg px-4 py-2">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    Update Product
+                                </button>
                             </div>
                         </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-arrow-right fa-lg me-3 fa-fw"></i>
-                            <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                                <input type="text" id="dateOfCommitment" class="form-control" required name="model" value="{{product.model}}"/>
-                                <label class="form-label" for="dateOfCommitment">Model</label>
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
-                            <div data-mdb-input-init class="flex-fill mb-0 form-outline">
-                                <textarea class="form-control" id="remarks" rows="3" name="problem">{{product.problem}}</textarea>
-                                <label class="form-label" for="productModel">Problem</label>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
-                            <div data-mdb-input-init class="flex-fill mb-0 form-outline">
-                                <textarea class="form-control" id="remarks" rows="3" name="remark">{{product.remark}}</textarea>
-                                <label class="form-label" for="productModel">Remark</label>
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-calendar-days fa-lg me-3 fa-fw"></i>
-                            <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                                <input type="date" id="dateOfCommitment" class="form-control" required name="commitmentDate" value="{{product.commitmentDate|date:'Y-m-d' }}"/>
-                                <label class="form-label" for="dateOfCommitment">Date of Commitment</label>
-                            </div>
-                        </div>
-                        
-                </div>
-                <!-- Customer Details Form -->
-                <div class="col-lg-7 rounded-end-4">
-                    <p class="text-center h4 fw-bold mb-4 mx-1 mx-md-4 mt-4">Customer Details</p>
-
-                    <div class="d-flex flex-row align-items-center mb-4">
-                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                        <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                            <input type="text" id="customerName" class="form-control" name="customerName" required value="{{product.customer.customerName}}"/>
-                            <label class="form-label" for="customerName">Customer Name</label>
-                        </div>
                     </div>
-                    <div class="d-flex flex-row align-items-center mb-4">
-                        <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                        <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                            <input type="text" id="customerEmail" class="form-control" name="customerEmail" value="{{product.customer.customerEmail}}"/>
-                            <label class="form-label" for="customerEmail">Customer Email</label>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-row align-items-center mb-4">
-                        <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
-                        <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                            <input type="text" id="customerMobile" class="form-control" name="customerMobNo" required value="{{product.customer.customerMobNo}}"/>
-                            <label class="form-label" for="customerMobile">Customer Mobile No</label>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-row align-items-center mb-4">
-                        <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
-                        <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                            <textarea id="customerAddress" class="form-control" rows="3" name="customerAddress" required>{{product.customer.customerAddress}}}</textarea>
-                            <label class="form-label" for="customerAddress">Customer Address</label>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-row align-items-center mb-4">
-                        <i class="fa-solid fa-screwdriver-wrench fa-lg me-3 fa-fw"></i>
-                        <div class="form-outline flex-fill mb-0">
-                            <select id="productBrand" class="form-select" name="productStatus" required>
-                                <option value="" selected disabled>Select Status</option>
-                                <option value="Inwarded" {% if product.productStatus == 'Inwarded' %} selected {% endif %}>Inward</option>
-                                <option value="In Service" {% if product.productStatus == 'In Service' %} selected {% endif %}>In Service</option>
-                                <option value="Delivered" {% if product.productStatus == 'Delivered' %} selected {% endif %}>Delivered</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-check d-flex justify-content-between align-items-center mx-5 my-4">
-                        <input class="form-check-input me-2" type="checkbox" id="form2Example3c" name="productChecked" checked disabled/>
-                        <label class="form-check-label" for="form2Example3c">
-                            Product Checked <span class="text-danger">(if any Scrateches/ Marks, Damages Please mention in Remarks)</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                    <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
-                </div>
-            </form>
-
+                </form>
             </div>
         </div>
     </div>
-
 </section>
-{% endblock body %}
+
+<style>
+:root {
+    --primary-color: #1e3a8a;
+    --secondary-color: #e91e63;
+    --light-gray: #f8f9fa;
+    --dark-gray: #6c757d;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #1e40af;
+    border-color: #1e40af;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    height: 100%;
+}
+
+.form-group {
+    position: relative;
+}
+
+.input-group-text {
+    border: none;
+    min-width: 50px;
+    justify-content: center;
+}
+
+.form-control, .form-select {
+    border-left: none;
+    border-radius: 0 0.375rem 0.375rem 0;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.25);
+    border-color: var(--primary-color);
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-select:focus ~ label {
+    color: var(--primary-color);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    border-bottom: 3px solid var(--secondary-color);
+}
+
+.btn-lg {
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    min-width: 140px;
+}
+
+.btn-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.form-text {
+    font-size: 0.875rem;
+}
+
+.bg-light {
+    background-color: var(--light-gray) !important;
+}
+
+/* Status-specific colors */
+.bg-success {
+    background-color: var(--success-color) !important;
+}
+
+.bg-warning {
+    background-color: var(--warning-color) !important;
+}
+
+.bg-danger {
+    background-color: var(--danger-color) !important;
+}
+
+.bg-info {
+    background-color: var(--info-color) !important;
+}
+
+/* Animation for form interactions */
+.form-control:focus, .form-select:focus {
+    animation: focusGlow 0.3s ease;
+}
+
+@keyframes focusGlow {
+    0% { box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.4); }
+    100% { box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.25); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-section {
+        padding: 1.5rem;
+    }
     
+    .icon-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .btn-lg {
+        min-width: 120px;
+        font-size: 0.9rem;
+    }
+    
+    .card-body {
+        padding: 2rem 1rem;
+    }
+}
+
+/* Form validation styles */
+.form-control:invalid {
+    border-color: var(--danger-color);
+}
+
+.form-control:valid {
+    border-color: var(--success-color);
+}
+
+/* Loading animation for form submission */
+.btn-primary:disabled {
+    position: relative;
+    color: transparent;
+}
+
+.btn-primary:disabled::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.getElementById('productStatus');
+    const technicianDiv = document.getElementById('technicianDiv');
+    const technicianSelect = document.getElementById('productTechnician');
+    
+    function toggleTechnicianField() {
+        const selectedStatus = statusSelect.value;
+        
+        if (selectedStatus === 'In Service') {
+            technicianDiv.style.display = 'block';
+            technicianSelect.required = true;
+            
+            // Smooth animation
+            technicianDiv.style.opacity = '0';
+            technicianDiv.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                technicianDiv.style.opacity = '1';
+                technicianDiv.style.transform = 'translateY(0)';
+            }, 50);
+        } else {
+            technicianDiv.style.display = 'none';
+            technicianSelect.required = false;
+            technicianSelect.value = '';
+        }
+    }
+    
+    // Initialize on page load
+    toggleTechnicianField();
+    
+    // Event listener for status change
+    statusSelect.addEventListener('change', toggleTechnicianField);
+    
+    // Form validation
+    const form = document.querySelector('form');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    
+    form.addEventListener('submit', function(e) {
+        // Add loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Updating...';
+        
+        // Re-enable after 3 seconds (fallback)
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Update Product';
+        }, 3000);
+    });
+    
+    // Reset form functionality
+    const resetBtn = document.querySelector('button[type="reset"]');
+    resetBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        if (confirm('Are you sure you want to reset all changes?')) {
+            form.reset();
+            toggleTechnicianField();
+        }
+    });
+    
+    // Real-time validation feedback
+    const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+    
+    requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
+        });
+        
+        field.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid') && this.value.trim() !== '') {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
+        });
+    });
+});
+</script>
+{% endblock body %}

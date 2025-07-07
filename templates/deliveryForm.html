@@ -1,169 +1,383 @@
 {% extends 'base.html' %}
-{% block title %}Product Inward{% endblock title %}
+{% block title %}Product Delivery{% endblock title %}
 
 {% block body %}
-<section class="inward-sts">
-    <div class="container-fluid p-5">
-        <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4 mt-4">Delivery Form</p>
-        <div class="container-fluid border shadow rounded-5 p-4">
-            <form action="{% url 'delivery' did=service.id %}" method="post">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-gears fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Service Id :</strong> <span class="box-content">{{ service.service_id }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-share-from-square fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Inward Id :</strong> <span class="box-content">{{ service.product.id }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-microchip fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Service Technician :</strong> <span class="box-content">{{ service.product.id }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-laptop fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Brand:</strong> <span class="box-content">{{ service.product.brand }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-arrow-right fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Model:</strong> <span class="box-content">{{ service.product.model }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-hashtag fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Product Serial No:</strong> <span class="box-content">{{ service.product.serialNo }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Problem:</strong> <span class="box-content">{{ service.product.problem }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Remark:</strong> <span class="box-content">{{ service.product.remark }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Component Used:</strong> <span class="box-content">{{ service.component }}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+    }
 
-                    <div class="col-lg-6">
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-screwdriver-wrench fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Service Remark:</strong> <span class="box-content">{{ service.serviceRemark }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-money-bill-wave fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Service Cost (INR):</strong> <span class="box-content">{{ service.serviceCost }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-calendar-days fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Date of Inward:</strong> <span class="box-content bg-warning text-white">{{ service.product.inwardDate }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Customer Name :</strong> <span class="box-content">{{ customer.customerName }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Customer Email :</strong> <span class="box-content">{{ service.product.id }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Customer Mobile No :</strong> <span class="box-content">{{ service.product.model }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-hashtag fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Customer Address :</strong> <span class="box-content">{{ service.product.serialNo }}</span></p>
-                            </div>
-                        </div>
+    .main-container {
+        background: white;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-title {
+        color: #000;
+        font-size: 24px;
+        font-weight: 600;
+        border-bottom: 2px solid #db2777;
+        padding-bottom: 8px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        color: #000;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        text-decoration: underline;
+        text-decoration-color: #db2777;
+        text-underline-offset: 3px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #000;
+        font-weight: 500;
+        min-width: 140px;
+        font-size: 13px;
+    }
+
+    .info-value {
+        background-color: #2563eb;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .highlight-warning {
+        background-color: #f59e0b !important;
+    }
+
+    .icon {
+        color: #db2777;
+        font-size: 14px;
+        margin-right: 8px;
+        width: 16px;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .form-check-input:checked {
+        background-color: #db2777;
+        border-color: #db2777;
+    }
+
+    .satisfaction-option {
+        text-align: center;
+        padding: 10px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        background: white;
+        border: 1px solid #dee2e6;
+    }
+
+    .satisfaction-option:hover {
+        border-color: #db2777;
+        transform: translateY(-1px);
+    }
+
+    .satisfaction-option.active {
+        border-color: #db2777;
+        background-color: #fdf2f8;
+    }
+
+    .btn-submit {
+        background-color: #db2777;
+        border: none;
+        color: white;
+        padding: 10px 30px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-submit:hover {
+        background-color: #be185d;
+        transform: translateY(-1px);
+    }
+
+    .delivery-questions {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 15px;
+    }
+
+    .question-item {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 4px solid #db2777;
+    }
+
+    .question-label {
+        color: #000;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .form-check-label {
+        color: #000;
+        font-weight: 500;
+        font-size: 13px;
+    }
+
+    .satisfaction-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .satisfaction-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container-fluid py-3">
+    <div class="main-container rounded p-4">
+        <h1 class="text-center page-title">Delivery Form</h1>
+        
+        <form action="{% url 'delivery' did=service.id %}" method="post">
+            {% csrf_token %}
+            
+            <div class="row">
+                <!-- Service Information -->
+                <div class="col-lg-6">
+                    <h3 class="section-title">
+                        <i class="bi bi-gear icon"></i>Service Information
+                    </h3>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-hash icon"></i>
+                        <span class="info-label">Service ID:</span>
+                        <span class="info-value">{{ service.service_id }}</span>
                     </div>
-                    <div class=" d-flex justify-content-center align-items-center">
-                        <i class="fa-regular fa-clock fa-lg me-3 fa-fw"></i>
-                        <strong>Delivered on or Before Delivery Date ?</strong>
-                        <div class="form-check ms-5">
-                            <input class="form-check-input" type="radio" name="deliveredOnTime" id="flexRadioDefault1" checked value="Yes">
-                            <label class="form-check-label" for="flexRadioDefault1">
-                                Yes
-                            </label>
-                        </div>
-                        <div class="form-check ms-5">
-                            <input class="form-check-input" type="radio" name="deliveredOnTime" id="flexRadioDefault2" value="No">
-                            <label class="form-check-label" for="flexRadioDefault2">
-                                No
-                            </label>
-                        </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-box-arrow-in-right icon"></i>
+                        <span class="info-label">Inward ID:</span>
+                        <span class="info-value">{{ service.product.id }}</span>
                     </div>
-                    <div class=" d-flex justify-content-center align-items-center my-5">
-                        <i class="fa-regular fa-face-laugh fa-lg me-3 fa-fw"></i>
-                        <strong>Customer Satisfacion ?</strong>
-                        <div class="form-check ms-5">
-                            <input class="form-check-input" type="radio" name="customerSatisfaction" id="satisfied" value="Satisfied" checked>
-                            <label class="form-check-label" for="satisfied">
-                                <i class="fa-regular fa-face-smile-beam rounded-circle bg-success" style="font-size: 40px; color: white; border: 1px solid black;"></i>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-person-gear icon"></i>
+                        <span class="info-label">Technician:</span>
+                        <span class="info-value">{{ service.serviceTechnician }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-laptop icon"></i>
+                        <span class="info-label">Brand:</span>
+                        <span class="info-value">{{ service.product.brand }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-tag icon"></i>
+                        <span class="info-label">Model:</span>
+                        <span class="info-value">{{ service.product.model }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-upc-scan icon"></i>
+                        <span class="info-label">Serial Number:</span>
+                        <span class="info-value">{{ service.product.serialNo }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-exclamation-triangle icon"></i>
+                        <span class="info-label">Problem:</span>
+                        <span class="info-value">{{ service.product.problem }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-chat-square-text icon"></i>
+                        <span class="info-label">Remark:</span>
+                        <span class="info-value">{{ service.product.remark }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-cpu icon"></i>
+                        <span class="info-label">Component Used:</span>
+                        <span class="info-value">{{ service.component }}</span>
+                    </div>
+                </div>
+
+                <!-- Customer & Service Details -->
+                <div class="col-lg-6">
+                    <h3 class="section-title">
+                        <i class="bi bi-person-circle icon"></i>Customer & Service Details
+                    </h3>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-tools icon"></i>
+                        <span class="info-label">Service Remark:</span>
+                        <span class="info-value">{{ service.serviceRemark }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-currency-rupee icon"></i>
+                        <span class="info-label">Service Cost:</span>
+                        <span class="info-value">₹{{ service.serviceCost }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-calendar-event icon"></i>
+                        <span class="info-label">Inward Date:</span>
+                        <span class="info-value highlight-warning">{{ service.product.inwardDate }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-person icon"></i>
+                        <span class="info-label">Customer Name:</span>
+                        <span class="info-value">{{ customer.customerName }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-envelope icon"></i>
+                        <span class="info-label">Customer Email:</span>
+                        <span class="info-value">{{ customer.customerEmail }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-phone icon"></i>
+                        <span class="info-label">Customer Mobile:</span>
+                        <span class="info-value">{{ customer.customerMobNo }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="bi bi-geo-alt icon"></i>
+                        <span class="info-label">Customer Address:</span>
+                        <span class="info-value">{{ customer.customerAddress }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Questions -->
+            <div class="delivery-questions">
+                <h4 class="section-title">
+                    <i class="bi bi-clipboard-check icon"></i>Delivery Assessment
+                </h4>
+                
+                <div class="question-item">
+                    <div class="question-label">
+                        <i class="bi bi-clock icon"></i>
+                        Delivered on or Before Delivery Date?
+                    </div>
+                    <div class="radio-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deliveredOnTime" id="onTimeYes" value="Yes" checked>
+                            <label class="form-check-label" for="onTimeYes">
+                                <i class="bi bi-check-circle text-success me-1"></i>Yes
                             </label>
                         </div>
-                        <div class="form-check ms-5">
-                            <input class="form-check-input" type="radio" name="customerSatisfaction" id="neutral" value="Neutral">
-                            <label class="form-check-label" for="neutral">
-                                <i class="fa-regular fa-face-meh rounded-circle bg-warning" style="font-size: 40px; color: white; border: 1px solid black;"></i>
-                            </label>
-                        </div>
-                        <div class="form-check ms-5">
-                            <input class="form-check-input" type="radio" name="customerSatisfaction" id="not_satisfied" value="Not Satisfied">
-                            <label class="form-check-label" for="not_satisfied">
-                                <i class="fa-regular fa-face-frown rounded-circle bg-danger" style="font-size: 40px; color: white; border: 1px solid black;"></i>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deliveredOnTime" id="onTimeNo" value="No">
+                            <label class="form-check-label" for="onTimeNo">
+                                <i class="bi bi-x-circle text-danger me-1"></i>No
                             </label>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                
+                <div class="question-item">
+                    <div class="question-label">
+                        <i class="bi bi-emoji-smile icon"></i>
+                        Customer Satisfaction Rating
+                    </div>
+                    <div class="satisfaction-grid">
+                        <div class="satisfaction-option" onclick="selectSatisfaction('satisfied')">
+                            <input class="form-check-input d-none" type="radio" name="customerSatisfaction" id="satisfied" value="Satisfied" checked>
+                            <label class="form-check-label w-100" for="satisfied">
+                                <i class="bi bi-emoji-smile-fill text-success" style="font-size: 24px;"></i>
+                                <div class="mt-1 fw-bold text-success" style="font-size: 12px;">Satisfied</div>
+                            </label>
+                        </div>
+                        <div class="satisfaction-option" onclick="selectSatisfaction('neutral')">
+                            <input class="form-check-input d-none" type="radio" name="customerSatisfaction" id="neutral" value="Neutral">
+                            <label class="form-check-label w-100" for="neutral">
+                                <i class="bi bi-emoji-neutral-fill text-warning" style="font-size: 24px;"></i>
+                                <div class="mt-1 fw-bold text-warning" style="font-size: 12px;">Neutral</div>
+                            </label>
+                        </div>
+                        <div class="satisfaction-option" onclick="selectSatisfaction('notSatisfied')">
+                            <input class="form-check-input d-none" type="radio" name="customerSatisfaction" id="notSatisfied" value="Not Satisfied">
+                            <label class="form-check-label w-100" for="notSatisfied">
+                                <i class="bi bi-emoji-frown-fill text-danger" style="font-size: 24px;"></i>
+                                <div class="mt-1 fw-bold text-danger" style="font-size: 12px;">Not Satisfied</div>
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-submit">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Complete Delivery
+                </button>
+            </div>
+        </form>
     </div>
-</section>
+</div>
+
+<script>
+function selectSatisfaction(option) {
+    // Remove active class from all options
+    document.querySelectorAll('.satisfaction-option').forEach(opt => {
+        opt.classList.remove('active');
+    });
+    
+    // Add active class to selected option
+    document.getElementById(option).parentElement.classList.add('active');
+    
+    // Check the radio button
+    document.getElementById(option).checked = true;
+}
+
+// Initialize first option as active
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.satisfaction-option').classList.add('active');
+});
+</script>
 {% endblock body %}

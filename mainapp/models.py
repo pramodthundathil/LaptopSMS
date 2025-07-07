@@ -71,6 +71,8 @@ class Team(models.Model):
         self.user.is_active = False
         self.save()
         
+    def __str__(self):
+        return str(self.empName) + str(f' ({self.position})')
     
 #Service model
 class Service(models.Model):
