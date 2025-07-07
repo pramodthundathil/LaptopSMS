@@ -2,151 +2,365 @@
 {% block title %}Product Inward{% endblock title %}
 
 {% block body %}
-<section class="inward-sts">
-    <div class="container-fluid p-5">
-        <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4 mt-4">Delivery Details</p>
-        <div class="container-fluid border shadow rounded-5 p-4">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-gears fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Service Id :</strong> <span class="box-content">{{ delivery.service.service_id }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-share-from-square fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Inward Id :</strong> <span class="box-content">{{ delivery.service.product.id }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-microchip fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Service Technician :</strong> <span class="box-content">{{ delivery.service.product.id }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-laptop fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Brand:</strong> <span class="box-content">{{ delivery.service.product.brand }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-arrow-right fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Model:</strong> <span class="box-content">{{ delivery.service.product.model }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-hashtag fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Product Serial No:</strong> <span class="box-content">{{ delivery.service.product.serialNo }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Problem:</strong> <span class="box-content">{{ delivery.service.product.problem }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Remark:</strong> <span class="box-content">{{ delivery.service.product.remark }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-wrench fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Component Used:</strong> <span class="box-content">{{ delivery.service.component }}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .product-info-header {
+        background: linear-gradient(135deg, #1e40af 0%, #4472c4 100%);
+        color: white;
+        padding: 10px 0;
+        margin-bottom: 15px;
+    }
+    
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .header-title {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .header-title i {
+        margin-right: 8px;
+        font-size: 1.2rem;
+    }
+    
+    .id-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 6px 12px;
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    
+    .section-header {
+        background: #1e40af;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    
+    .section-header i {
+        margin-right: 6px;
+        font-size: 1rem;
+    }
+    
+    .inward-sts .container-fluid {
+        padding: 0 !important;
+    }
+    
+    .inward-sts .container-fluid.border {
+        background: white;
+        border-radius: 6px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        padding: 12px !important;
+        margin-bottom: 10px;
+        border: none !important;
+    }
+    
+    .inward-sts .d-flex.flex-row {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .inward-sts .d-flex.flex-row:last-child {
+        border-bottom: none;
+    }
+    
+    .inward-sts .d-flex.flex-row i {
+        width: 35px;
+        height: 35px;
+        border-radius: 6px;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem !important;
+        margin-right: 8px;
+    }
+    
+    .inward-sts .bi-gear { background: #1e40af; }
+    .inward-sts .bi-box-arrow-up-right { background: #1e40af; }
+    .inward-sts .bi-cpu { background: #1e40af; }
+    .inward-sts .bi-laptop { background: #6c757d; }
+    .inward-sts .bi-arrow-right { background: #1e40af; }
+    .inward-sts .bi-hash { background: #1e40af; }
+    .inward-sts .bi-wrench { background: #dc3545; }
+    .inward-sts .bi-tools { background: #17a2b8; }
+    .inward-sts .bi-cash-coin { background: #28a745; }
+    .inward-sts .bi-calendar-date { background: #ffc107; }
+    .inward-sts .bi-person { background: #1e40af; }
+    .inward-sts .bi-envelope { background: #1e40af; }
+    .inward-sts .bi-telephone { background: #1e40af; }
+    .inward-sts .bi-geo-alt { background: #1e40af; }
+    .inward-sts .bi-clock { background: #6c757d; }
+    .inward-sts .bi-emoji-smile { background: #28a745; }
+    
+    .inward-sts .flex-fill p {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+    
+    .inward-sts .flex-fill strong {
+        color: #666;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+    
+    .inward-sts .box-content {
+        color: #333;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    
+    .inward-sts .bg-warning {
+        background: #ffc107 !important;
+        color: #212529 !important;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: 600;
+    }
+    
+    .inward-sts .text-center.h1 {
+        display: none;
+    }
+    
+    .delivery-status {
+        padding: 8px 0;
+        border-top: 1px solid #eee;
+        margin-top: 10px;
+    }
+    
+    .satisfaction-section {
+        padding: 10px 0;
+        border-top: 1px solid #eee;
+    }
+    
+    .satisfaction-icon {
+        font-size: 30px;
+        border: 1px solid #333;
+        padding: 5px;
+        margin-right: 10px;
+    }
+    
+    .satisfaction-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+    
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+    
+    .col-lg-6 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+        margin: 0 5px;
+        font-size: 0.9rem;
+    }
+</style>
 
-                    <div class="col-lg-6">
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-screwdriver-wrench fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Service Remark:</strong> <span class="box-content">{{ delivery.service.serviceRemark }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-money-bill-wave fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Service Cost (INR):</strong> <span class="box-content">{{ delivery.service.serviceCost }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-calendar-days fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Date of Inward:</strong> <span class="box-content bg-warning text-white">{{ delivery.service.product.inwardDate }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Customer Name :</strong> <span class="box-content">{{ delivery.service.product.customer.customerName }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Customer Email :</strong> <span class="box-content">{{ delivery.service.product.id }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Customer Mobile No :</strong> <span class="box-content">{{ delivery.service.product.model }}</span></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fa-solid fa-hashtag fa-lg me-3 fa-fw"></i>
-                            <div class="flex-fill mb-0">
-                                <p><strong>Customer Address :</strong> <span class="box-content">{{ delivery.service.product.customer.customerAddress }}</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class=" d-flex justify-content-center align-items-center">
-                        <i class="fa-regular fa-clock fa-lg me-3 fa-fw"></i>
-                        <strong>Delivered on or Before Delivery Date ?</strong>
-                        <div class="mx-3 rounded px-3 py-1{% if delivery.deliveredOnTime == 'Yes' %} bg-success {% else %} bg-danger {% endif %}">
-                            <p style="font-size: 1.2rem; font-weight: 600;" class="text-white p-0 m-0">{% if delivery.deliveredOnTime == 'Yes' %} Yes {% else %} No {% endif %}</p>
+<!-- Include Bootstrap Icons -->
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"> -->
+<div class="container">
+<div class="container">
+    <div class="product-info-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-title">
+                    <i class="bi bi-box"></i>
+                    Product Information
+                </div>
+                <div class="id-badge">
+                    ID: 4524
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="section-header">
+                <i class="bi bi-gear"></i>
+                Product Details
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="section-header">
+                <i class="bi bi-person"></i>
+                Customer Details
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="inward-sts">
+    <div class="container-fluid p-2">
+        <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4 mt-4">Delivery Details</p>
+        <div class="container-fluid border shadow rounded p-3">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-gear"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Service Id :</strong> <span class="box-content">{{ delivery.service.service_id }}</span></p>
                         </div>
                     </div>
-                    <div class=" d-flex justify-content-center align-items-center my-5">
-                        <i class="fa-regular fa-face-laugh fa-lg me-3 fa-fw"></i>
-                        <strong>Customer Satisfacion ?</strong>
-                        <div class="form-check ms-5 d-flex align-items-center">
-                            {% if delivery.customerSatisfaction == 'Satisfied' %}
-                            <i class="fa-regular fa-face-smile-beam rounded-circle bg-success" style="font-size: 40px; color: white; border: 1px solid black;"></i>
-                            <strong class="border border-success p-2 rounded-pill m-0 mx-4">{{delivery.customerSatisfaction}}</strong>
-                            {% elif delivery.customerSatisfaction == 'Neutral' %}
-                            <i class="fa-regular fa-face-meh rounded-circle bg-warning" style="font-size: 40px; color: white; border: 1px solid black;"></i>
-                            <strong class="border border-warning p-2 rounded-pill m-0 mx-4">{{delivery.customerSatisfaction}}</strong>
-                            {% else %}
-                            <i class="fa-regular fa-face-frown rounded-circle bg-danger" style="font-size: 40px; color: white; border: 1px solid black;"></i>
-                            <strong class="border border-danger p-2 rounded-pill m-0 mx-4">{{delivery.customerSatisfaction}}</strong>
-                            {% endif %}
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Inward Id :</strong> <span class="box-content">{{ delivery.service.product.id }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-cpu"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Service Technician :</strong> <span class="box-content">{{ delivery.service.product.id }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-laptop"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Brand:</strong> <span class="box-content">{{ delivery.service.product.brand }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-arrow-right"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Model:</strong> <span class="box-content">{{ delivery.service.product.model }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-hash"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Product Serial No:</strong> <span class="box-content">{{ delivery.service.product.serialNo }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-wrench"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Problem:</strong> <span class="box-content">{{ delivery.service.product.problem }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-wrench"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Remark:</strong> <span class="box-content">{{ delivery.service.product.remark }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-wrench"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Component Used:</strong> <span class="box-content">{{ delivery.service.component }}</span></p>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <a href="{% url 'deliveryHistory' %}"  class="btn btn-primary text-white">Delivery History</a>
-                        <a href="{% url 'dashboard' %}" class="btn btn-secondary text-white">Dashboard</a>
+
+                <div class="col-lg-6">
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-tools"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Service Remark:</strong> <span class="box-content">{{ delivery.service.serviceRemark }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-cash-coin"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Service Cost (INR):</strong> <span class="box-content">{{ delivery.service.serviceCost }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-calendar-date"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Date of Inward:</strong> <span class="box-content bg-warning text-white">{{ delivery.service.product.inwardDate }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-person"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Customer Name :</strong> <span class="box-content">{{ delivery.service.product.customer.customerName }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-envelope"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Customer Email :</strong> <span class="box-content">{{ delivery.service.product.id }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-telephone"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Customer Mobile No :</strong> <span class="box-content">{{ delivery.service.product.model }}</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                        <i class="bi bi-geo-alt"></i>
+                        <div class="flex-fill mb-0">
+                            <p><strong>Customer Address :</strong> <span class="box-content">{{ delivery.service.product.customer.customerAddress }}</span></p>
+                        </div>
                     </div>
                 </div>
+                
+                <div class="delivery-status d-flex justify-content-center align-items-center">
+                    <i class="bi bi-clock"></i>
+                    <strong>Delivered on or Before Delivery Date ?</strong>
+                    <div class="mx-2 rounded px-2 py-1{% if delivery.deliveredOnTime == 'Yes' %} bg-success {% else %} bg-danger {% endif %}">
+                        <p style="font-size: 1rem; font-weight: 600;" class="text-white p-0 m-0">{% if delivery.deliveredOnTime == 'Yes' %} Yes {% else %} No {% endif %}</p>
+                    </div>
+                </div>
+                
+                <div class="satisfaction-section d-flex justify-content-center align-items-center">
+                    <i class="bi bi-emoji-smile"></i>
+                    <strong>Customer Satisfaction ?</strong>
+                    <div class="form-check ms-3 d-flex align-items-center">
+                        {% if delivery.customerSatisfaction == 'Satisfied' %}
+                        <i class="bi bi-emoji-smile-fill satisfaction-icon rounded-circle bg-success text-white"></i>
+                        <strong class="border border-success satisfaction-badge text-success">{{delivery.customerSatisfaction}}</strong>
+                        {% elif delivery.customerSatisfaction == 'Neutral' %}
+                        <i class="bi bi-emoji-neutral-fill satisfaction-icon rounded-circle bg-warning text-white"></i>
+                        <strong class="border border-warning satisfaction-badge text-warning">{{delivery.customerSatisfaction}}</strong>
+                        {% else %}
+                        <i class="bi bi-emoji-frown-fill satisfaction-icon rounded-circle bg-danger text-white"></i>
+                        <strong class="border border-danger satisfaction-badge text-danger">{{delivery.customerSatisfaction}}</strong>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-12 text-center">
+                    <a href="{% url 'deliveryHistory' %}" class="btn btn-primary text-white">Delivery History</a>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary text-white">Dashboard</a>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+</div>
+
 {% endblock body %}

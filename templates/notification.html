@@ -1,0 +1,219 @@
+
+{% extends 'base.html' %}
+{% block title %}Notifications {% endblock title %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="bi bi-bell"></i> Notifications</h5>
+                        <span class="badge bg-primary">{{ unread_count }} unread</span>
+                    </div>
+                    <div class="card-body">
+                        {% if notifications %}
+                            <div class="list-group">
+                                {% for notification in notifications %}
+                                <div class="list-group-item {% if not notification.is_read %}list-group-item-warning{% endif %}" 
+                                     id="notification-{{ notification.id }}">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">{{ notification.title }}</h6>
+                                            <p class="mb-1">{{ notification.message }}</p>
+                                            <small class="text-muted">{{ notification.created_at|date:"M d, Y H:i" }}</small>
+                                        </div>
+                                        <div class="ms-3">
+                                            {% if not notification.is_read %}
+                                                <span class="badge bg-warning" 
+                                                        data-notification-id="{{ notification.id }}">
+                                                     Mark Read
+                                        </span>
+                                            {% else %}
+                                                <span class="badge bg-success">Read</span>
+                                            {% endif %}
+                                            <a href="{% url 'notification_mark_read' notification.id  %}">Go To Service</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No notifications yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
+        <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fas fa-bell text-primary me-2"></i>
+                <strong class="me-auto">New Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
+    <script>
+        // CSRF token for Django
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Mark notification as read
+        document.addEventListener('DOMContentLoaded', function() {
+            const markReadButtons = document.querySelectorAll('.mark-read-btn');
+            
+            markReadButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const notificationId = this.dataset.notificationId;
+                    markNotificationAsRead(notificationId);
+                });
+            });
+
+            // Start polling for new notifications
+            startNotificationPolling();
+        });
+
+        function markNotificationAsRead(notificationId) {
+            fetch(`/notifications/mark-read/${notificationId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update the UI
+                    const notificationElement = document.getElementById(`notification-${notificationId}`);
+                    notificationElement.classList.remove('list-group-item-warning');
+                    
+                    // Replace the button with a "Read" badge
+                    const buttonContainer = notificationElement.querySelector('.ms-3');
+                    buttonContainer.innerHTML = '<span class="badge bg-success">Read</span>';
+                    
+                    // Update the unread count
+                    updateUnreadCount();
+                }
+            })
+            .catch(error => {
+                console.error('Error marking notification as read:', error);
+            });
+        }
+
+        function updateUnreadCount() {
+            fetch('/notifications/count/')
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('.badge.bg-primary').textContent = `${data.unread_count} unread`;
+                })
+                .catch(error => {
+                    console.error('Error updating unread count:', error);
+                });
+        }
+
+        // Poll for new notifications every 30 seconds
+        function startNotificationPolling() {
+            setInterval(checkForNewNotifications, 30000);
+        }
+
+        function checkForNewNotifications() {
+            fetch('/notifications/latest/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.notifications.length > 0) {
+                        // Show toast notification for the latest one
+                        showNotificationToast(data.notifications[0]);
+                        
+                        // Update unread count
+                        document.querySelector('.badge.bg-primary').textContent = `${data.unread_count} unread`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking for new notifications:', error);
+                });
+        }
+
+        function showNotificationToast(notification) {
+            const toastElement = document.getElementById('liveToast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.innerHTML = `
+                <strong>${notification.title}</strong><br>
+                ${notification.message}
+            `;
+            
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    </script>
+
+
+<!-- templates/base.html - Add this to your base template for the notification bell -->
+<!-- Add this to your navigation bar -->
+<!-- <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bell"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge">
+            0
+        </span>
+    </a>
+    
+</li> -->
+
+<script>
+// Add this script to your base template
+document.addEventListener('DOMContentLoaded', function() {
+    // Load initial notification count
+    updateNotificationDropdown();
+    
+    // Poll for updates every 30 seconds
+    setInterval(updateNotificationDropdown, 30000);
+});
+
+function updateNotificationDropdown() {
+    fetch('/notifications/latest/')
+        .then(response => response.json())
+        .then(data => {
+            // Update badge count
+            const badge = document.getElementById('notificationBadge');
+            if (data.unread_count > 0) {
+                badge.textContent = data.unread_count;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+            
+            // Update dropdown content
+            const dropdownContent = document.getElementById('notificationDropdownContent');
+            if (data.notifications.length > 0) {
+                dropdownContent.innerHTML = data.notifications.map(notification => `
+                    <li>
+                        <a class="dropdown-item py-2" href="/notifications/">
+                            <div class="fw-bold">${notification.title}</div>
+                            <div class="text-muted small">${notification.message.substring(0, 50)}...</div>
+                        </a>
+                    </li>
+                `).join('');
+            } else {
+                dropdownContent.innerHTML = '<li><span class="dropdown-item-text">No new notifications</span></li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error updating notifications:', error);
+        });
+}
+</script>
+{% endblock body %}

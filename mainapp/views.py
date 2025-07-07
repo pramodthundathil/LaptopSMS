@@ -11,6 +11,9 @@ from django.utils.timezone import now
 from datetime import timedelta, date
 from django.db.models import Avg
 from decimal import Decimal
+from django.db.models import Case, When, Value, IntegerField
+
+
 
 @login_required
 def dashboard(request):
@@ -21,6 +24,8 @@ def dashboard(request):
     service_count = Service.objects.count()
     count_employee = Team.objects.count()
     count_deliveries = Delivery.objects.count()
+    notifications = Notification.objects.filter(user=request.user)
+    unread_count = notifications.filter(is_read=False).count()
     
     # Calculate Service count
     serviceDone=0
@@ -76,6 +81,7 @@ def dashboard(request):
         'customer_satisfaction':customer_satisfaction,
         'daily_revenue': daily_revenue,
         'monthly_revenue': monthly_revenue,
+        
     }
     return render(request, 'index.html', context)
 
@@ -382,8 +388,15 @@ def inward(request):
 
 @login_required
 def inwardHistory(request):
-    product_inward = ProductInward.objects.all().order_by('-id')
-    
+    product_inward = ProductInward.objects.all().order_by(
+        Case(
+            When(productStatus='Delivered', then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        ),
+        '-id'
+    )
+        
     context = {
         'product_inward': product_inward,
     }
@@ -476,7 +489,7 @@ def service(request, pid):
             )
         
         service.save()
-        
+     
         product.problem = request.POST.get('problem')
         product.remark = request.POST.get('remark')
         product.productStatus = 'In Service'
@@ -510,6 +523,21 @@ def serviceDetails(request, sid):
     }
     
     return render(request, 'serviceDetails.html', context)
+
+
+@login_required
+def update_service_cost(request,pk ):
+
+    service  = get_object_or_404(Service, id = pk)
+    if request.method == "POST":
+        if service:
+            service.serviceCost = request.POST['service_cost']
+            service.save()
+            messages.success(request,"Service Cost Updated")
+            return redirect("serviceDetails", sid = pk)
+        else:
+            messages.success(request,"No service")
+            return redirect("serviceDetails", sid = pk)
 
 
 def delivery(request, did):
@@ -632,3 +660,74 @@ def delete_brand(request, pk):
     brand.delete()
     messages.success(request,"Brand Deleted....")
     return redirect("brands")
+
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+# notifications 
+def notifications(request):
+    """Display all notifications for the current user"""
+    notifications = Notification.objects.filter(user=request.user)
+    unread_count = notifications.filter(is_read=False).count()
+    
+    context = {
+        'notifications': notifications,
+        'unread_count': unread_count
+    }
+    return render(request,"notification.html",context)
+
+
+@login_required
+@require_POST
+def mark_notification_read(request, notification_id):
+    """Mark a specific notification as read"""
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'success'})
+    else:
+        messages.success(request, 'Notification marked as read')
+        return redirect('notifications')
+
+@login_required
+def get_notifications_count(request):
+    """Get unread notifications count via AJAX"""
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return JsonResponse({'unread_count': unread_count})
+
+@login_required
+def get_latest_notifications(request):
+    """Get latest notifications for real-time updates"""
+    notifications = Notification.objects.filter(
+        user=request.user, 
+        is_read=False
+    )[:5]  # Get latest 5 unread notifications
+    
+    notifications_data = []
+    for notification in notifications:
+        notifications_data.append({
+            'id': notification.id,
+            'title': notification.title,
+            'message': notification.message,
+            'created_at': notification.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'service_id': notification.service.service_id if notification.service else None
+        })
+    
+    return JsonResponse({
+        'notifications': notifications_data,
+        'unread_count': len(notifications_data)
+    })
+
+
+def notification_mark_read(request,pk):
+    notification = get_object_or_404(Notification, id = pk)
+    notification.is_read = True 
+    notification.save()
+    return redirect("serviceDetails", sid = notification.service.id )
+
+
+
+

@@ -257,6 +257,9 @@
                                 <option value="" disabled {% if not service.serviceStatus %}selected{% endif %}>Select status</option>
                                 <option value="Service Done" {% if service.serviceStatus == 'Service Done' %}selected{% endif %}>Service Done</option>
                                 <option value="Service Pending" {% if service.serviceStatus == 'Service Pending' %}selected{% endif %}>Service Pending</option>
+                                <option value="Service Ongoing" {% if service.serviceStatus == 'Service Ongoing' %}selected{% endif %}>Service Ongoing</option>
+                                <option value="Sent For Service" {% if service.serviceStatus == 'Sent For Service' %}selected{% endif %}>Sent For Service</option>
+                                <!-- <option value="Delivered" {% if service.serviceStatus == 'Delivered' %}selected{% endif %}>Delivered</option> -->
                                 <option value="Components Not available" {% if service.serviceStatus == 'Components Not available' %}selected{% endif %}>Components Not available</option>
                             </select>
                         </div>

@@ -15,14 +15,75 @@
     
     .datetime-badge {
         background: rgba(37, 100, 235, 0.88);
-        border: 1px solid rgba(9, 49, 136, 0.623);
-        /* backdrop-filter: blur(10px); */
+        border: 1px solid rgba(136, 39, 9, 0.623);
         color: #ffffff;
         font-weight: 600;
         font-size: 1.1rem;
         padding: 12px 24px;
         border-radius: 50px;
         box-shadow: 0 4px 20px rgba(37, 99, 235, 0.25);
+        margin-right: 20px;
+    }
+    
+    /* Notification Bell Styles */
+    .notification-bell {
+        position: relative;
+        background: rgba(225, 51, 89, 0.9);
+        border: 1px solid rgba(195, 54, 84, 0.8);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 12px 20px;
+        border-radius: 50px;
+        box-shadow: 0 4px 20px rgba(225, 51, 89, 0.25);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .notification-bell:hover {
+        background: rgba(225, 51, 89, 1);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(225, 51, 89, 0.35);
+        color: #ffffff;
+        text-decoration: none;
+    }
+    
+    .notification-count {
+        background: #ffffff;
+        color: #e13359;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 50px;
+        min-width: 20px;
+        text-align: center;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    .notification-bell i {
+        font-size: 1.2rem;
+        animation: ring 3s ease-in-out infinite;
+    }
+    
+    @keyframes ring {
+        0%, 85% { transform: rotate(0deg); }
+        5%, 15% { transform: rotate(14deg); }
+        10%, 20% { transform: rotate(-12deg); }
+        25%, 35% { transform: rotate(10deg); }
+        30%, 40% { transform: rotate(-8deg); }
+        45%, 55% { transform: rotate(6deg); }
+        50%, 60% { transform: rotate(-4deg); }
+        65%, 75% { transform: rotate(2deg); }
+        70%, 80% { transform: rotate(-1deg); }
     }
     
     .dashboard-title {
@@ -30,7 +91,6 @@
         font-size: 3rem;
         background: linear-gradient(135deg, #ffffff, #e2e8f0);
         -webkit-background-clip: text;
-        /* -webkit-text-fill-color: transparent; */
         background-clip: text;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
@@ -130,8 +190,7 @@
         left: 0;
         right: 0;
         height: 4px;
-        /* background: linear-gradient(90deg, #2563eb, #3b82f6); */
-         background: linear-gradient(90deg, #e13359, #c33654c8);
+        background: linear-gradient(90deg, #e13359, #c33654c8);
     }
     
     .satisfaction-icon {
@@ -194,9 +253,7 @@
         left: 0;
         right: 0;
         height: 4px;
-        /* background: linear-gradient(90deg, #2563eb, #3b82f6); */
-         background: linear-gradient(90deg, #e13359, #c33654c8);
-
+        background: linear-gradient(90deg, #e13359, #c33654c8);
     }
     
     .metrics-title {
@@ -216,14 +273,136 @@
         color:#252526;
         font-weight: 600;
     }
+    
+    /* Notification Panel Styles */
+    .notification-panel {
+        background: white;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        backdrop-filter: blur(15px);
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .notification-panel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #e13359, #c33654c8);
+    }
+    
+    .notification-item {
+        padding: 15px;
+        border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .notification-item:hover {
+        background: rgba(37, 99, 235, 0.05);
+    }
+    
+    .notification-item.unread {
+        background: rgba(225, 51, 89, 0.05);
+        border-left: 4px solid #e13359;
+    }
+    
+    .notification-title {
+        font-weight: 600;
+        color: #252526;
+        margin-bottom: 5px;
+    }
+    
+    .notification-message {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    
+    .notification-time {
+        color: #999;
+        font-size: 0.8rem;
+    }
+    
+    .mark-read-btn {
+        background: rgba(225, 51, 89, 0.1);
+        border: 1px solid rgba(225, 51, 89, 0.3);
+        color: #e13359;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+    
+    .mark-read-btn:hover {
+        background: rgba(225, 51, 89, 0.2);
+        transform: translateY(-1px);
+    }
+    
+    /* Toast Notification Styles */
+    .toast-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        border: 1px solid rgba(225, 51, 89, 0.3);
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+    }
+    
+    .toast-notification.show {
+        transform: translateX(0);
+    }
+    
+    .toast-notification::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #e13359, #c33654c8);
+        border-radius: 12px 12px 0 0;
+    }
 </style>
 
 <section class="dashboard">
     <div class="container-fluid p-5">
-        <div class="text-center mb-4">
-            <span class="datetime-badge" id="date-time"></span>
+        <div class="text-center mb-4 d-flex justify-content-center align-items-center">
+            <!-- <span class="datetime-badge" id="date-time"></span> -->
+            <a href="{% url 'notifications' %}" class="notification-bell" id="notification-bell">
+                <i class="bi bi-bell"></i>
+                <span>Service Notifications</span>
+                <span class="notification-count" id="notification-count">{{unread_count}}</span>
+            </a>
         </div>
         <p class="text-center dashboard-title mb-5">Service Center Dashboard</p>
+        
+        <!-- Notification Panel (Only show if user has notifications) -->
+        <div class="row g-4 mb-4" id="notification-section" style="display: none;">
+            <div class="col-12">
+                <div class="notification-panel">
+                    <div class="card-body">
+                        <h5 class="metrics-title">Recent Notifications</h5>
+                        <div id="notification-list">
+                            <!-- Notifications will be loaded here -->
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'notifications' %}" class="btn btn-outline-primary btn-sm">View All Notifications</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <div class="row g-4">
             <div class="col-lg-2 col-md-6">
@@ -277,13 +456,13 @@
                     <div class="card-body text-center">
                         <h5 class="metric-title">Inward to Service Conversion (%)</h5>
                         <p class="metric-value">{{ inward_to_service }}%</p>
-                        {% if inward_to_service <= 40 %}
+                        <!-- {% if inward_to_service <= 40 %}
                         <span class="status-badge status-poor">Poor Performance</span>
                         {% elif inward_to_service > 40 and inward_to_service <= 50 %}
                         <span class="status-badge status-moderate">Moderate Performance</span>
                         {% else %}
                         <span class="status-badge status-great">Great Performance</span>
-                        {% endif %}
+                        {% endif %} -->
                     </div>
                 </div>
             </div>
@@ -296,14 +475,13 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="metric-title mb-0">Customer Satisfaction</h5>
                             
-                            {% if customer_satisfaction > 60 %}
-                            <!-- <i class="fa-regular fa-face-smile-beam "></i> -->
-                            <i class="bi bi-emoji-smile-fill satisfaction-icon bg-success"></i>
+                            <!-- {% if customer_satisfaction > 60 %}
+                            <i class="bi bi-emoji-smile-fill rounded-circle bg-success" style="font-size: 30px; color: white; border: 1px solid black;"></i>
                             {% elif customer_satisfaction > 30 and customer_satisfaction <= 60 %}
-                            <i class="fa-regular fa-face-meh satisfaction-icon bg-warning"></i>
+                            <i class="bi bi-emoji-neutral-fill rounded-circle bg-warning" style="font-size: 30px; color: white; border: 1px solid black;"></i>
                             {% else %}
-                            <i class="fa-regular fa-face-frown satisfaction-icon bg-danger"></i>
-                            {% endif %}
+                            <i class=" bi bi-emoji-frown-fill rounded-circle bg-danger" style="font-size: 30px; color: white; border: 1px solid black;"></i>
+                            {% endif %} -->
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="metric-value">{{customer_satisfaction}}%</p>
@@ -360,7 +538,13 @@
     </div>
 </section>
 
+
+
 <script>
+    // CSRF token for Django
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    // DateTime update function
     function updateDateTime() {
         var now = new Date();
         var date = now.toLocaleDateString();
@@ -370,5 +554,136 @@
 
     setInterval(updateDateTime, 1000); 
     updateDateTime(); 
+    
+    // Notification functions
+    function loadNotifications() {
+        fetch('/notifications/latest/')
+            .then(response => response.json())
+            .then(data => {
+                updateNotificationBell(data.unread_count);
+                displayNotifications(data.notifications);
+            })
+            .catch(error => {
+                console.error('Error loading notifications:', error);
+            });
+    }
+    
+    function updateNotificationBell(count) {
+        const countElement = document.getElementById('notification-count');
+        const bellElement = document.getElementById('notification-bell');
+        
+        if (count > 0) {
+            countElement.textContent = count;
+            countElement.style.display = 'inline';
+            bellElement.style.display = 'inline-flex';
+        } else {
+            countElement.style.display = 'none';
+        }
+    }
+    
+    function displayNotifications(notifications) {
+        const notificationList = document.getElementById('notification-list');
+        const notificationSection = document.getElementById('notification-section');
+        
+        if (notifications.length > 0) {
+            notificationSection.style.display = 'block';
+            notificationList.innerHTML = notifications.slice(0, 3).map(notification => `
+                <div class="notification-item ${notification.is_read ? '' : 'unread'}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="notification-title">${notification.title}</div>
+                            <div class="notification-message">${notification.message}</div>
+                            <div class="notification-time">${formatTime(notification.created_at)}</div>
+                        </div>
+                        ${!notification.is_read ? `
+                            <button class="mark-read-btn" onclick="markAsRead(${notification.id})">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            notificationSection.style.display = 'none';
+        }
+    }
+    
+    function markAsRead(notificationId) {
+        fetch(`/notifications/mark-read/${notificationId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                loadNotifications(); // Refresh notifications
+            }
+        })
+        .catch(error => {
+            console.error('Error marking notification as read:', error);
+        });
+    }
+    
+    function showToastNotification(notification) {
+        const toast = document.getElementById('toast-notification');
+        const title = document.getElementById('toast-title');
+        const message = document.getElementById('toast-message');
+        const time = document.getElementById('toast-time');
+        
+        title.textContent = notification.title;
+        message.textContent = notification.message;
+        time.textContent = 'Just now';
+        
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 5000);
+    }
+    
+    function formatTime(timeString) {
+        const date = new Date(timeString);
+        const now = new Date();
+        const diff = now - date;
+        
+        if (diff < 60000) return 'Just now';
+        if (diff < 3600000) return `${Math.floor(diff / 60000)} minutes ago`;
+        if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
+        return date.toLocaleDateString();
+    }
+    
+    // Check for new notifications every 30 seconds
+    let lastNotificationCount = 0;
+    
+    function checkForNewNotifications() {
+        fetch('/notifications/latest/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.unread_count > lastNotificationCount && lastNotificationCount > 0) {
+                    // New notification received
+                    if (data.notifications.length > 0) {
+                        showToastNotification(data.notifications[0]);
+                    }
+                }
+                lastNotificationCount = data.unread_count;
+                updateNotificationBell(data.unread_count);
+                displayNotifications(data.notifications);
+            })
+            .catch(error => {
+                console.error('Error checking for new notifications:', error);
+            });
+    }
+    
+    // Initialize notifications on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadNotifications();
+        
+        // Start polling for new notifications
+        setInterval(checkForNewNotifications, 30000);
+    });
 </script>
 {% endblock body %}

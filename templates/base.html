@@ -27,7 +27,7 @@
             font-family: "Barlow Condensed", sans-serif !important;
             font-weight: 500;
             font-style: normal;
-            font-size:medium;
+            font-size: medium;
         }
 
         .admin-navbar {
@@ -51,6 +51,39 @@
             border-radius: 8px;
             transition: all 0.2s ease;
         }
+
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .notification-item.unread {
+            background: rgba(225, 51, 89, 0.05);
+            border-left: 4px solid #e13359;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #252526;
+            margin-bottom: 5px;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .notification-time {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
 
         .navbar-brand:hover {
             background: #f8fafc;
@@ -499,9 +532,11 @@
                                 <li>
                                     <h6 class="dropdown-header">Additional Options</h6>
                                 </li>
-                                <li><a class="dropdown-item" href="{%url 'brands' %}"><i class="bi bi-apple"></i> Brands</a></li>
+                                <li><a class="dropdown-item" href="{%url 'brands' %}"><i class="bi bi-apple"></i>
+                                        Brands</a></li>
                                 <li><a class="dropdown-item" href="#"><i class="bi bi-bell"></i> Analytics</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-file-spreadsheet"></i> Reports</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-file-spreadsheet"></i> Reports</a>
+                                </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
@@ -512,7 +547,7 @@
 
                         <!-- Right Section (Mobile) -->
                         <div class="right-section d-lg-none">
-                           
+
 
                             <div class="dropdown">
                                 <button class="notification-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
@@ -520,19 +555,19 @@
                                     <i class="bi bi-bell"></i>
                                     <span class="notification-badge">3</span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown"
+                                    style="min-width: 300px;">
                                     <li>
-                                        <h6 class="dropdown-header">Notifications</h6>
+                                        <h6 class="dropdown-header">Recent Notifications</h6>
                                     </li>
+                                    <div id="notificationDropdownContent">
+                                        <!-- Dynamic content will be loaded here -->
+                                    </div>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle"></i>System
-                                            update available</a></li>
-                                    <li><a class="dropdown-item" href="#"><i
-                                                class="fas fa-exclamation-triangle"></i>Server maintenance</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-check-circle"></i>Backup
-                                            completed</a></li>
+                                    <li><a class="dropdown-item text-center" href="{% url 'notifications' %}">View All
+                                            Notifications</a></li>
                                 </ul>
                             </div>
 
@@ -548,7 +583,8 @@
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person-bounding-box"></i>My Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i
+                                                class="bi bi-person-bounding-box"></i>My Profile</a></li>
                                     <!-- <li><a class="dropdown-item" href="{% url 'profile_update' user.id %}"><i
                                                 class="fas fa-cog"></i>Settings</a></li> -->
                                     {% if user.is_superuser %}
@@ -558,7 +594,8 @@
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
+                                                class="bi bi-box-arrow-right"></i> Logout</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -566,27 +603,51 @@
 
                     <!-- Right Section (Desktop) -->
                     <div class="right-section d-none d-lg-flex">
-                       
+
 
                         <div class="dropdown">
                             <button class="notification-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                                 <i class="bi bi-bell"></i>
-                                <span class="notification-badge">3</span>
+                                <span class="notification-badge">{{ unread_count }}</span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown"
+                                style="min-width: 300px;">
                                 <li>
-                                    <h6 class="dropdown-header">Notifications</h6>
+                                    <h6 class="dropdown-header">Recent Notifications</h6>
                                 </li>
+                                <div id="notificationDropdownContent">
+                                    {% if notifications %}
+                                    {% for notification in notifications %}
+                                    {% if not notification.is_read %}
+                                    <a style="text-decoration: none; color: black;" href="{%url 'notification_mark_read' notification.id %}">
+                                    <div class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                                        <div class="notification-content">
+                                            {{ notification.message }}
+                                        </div>
+                                        <div class="notification-meta">
+                                            <span class="notification-time">{{ notification.created_at|timesince }}
+                                                ago</span>
+                                            {% if not notification.is_read %}
+                                            <span class="unread-indicator"></span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    </a>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% else %}
+                                    <div class="no-notifications">
+                                        <p>No notifications yet.</p>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle"></i>System update
-                                        available</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-exclamation-triangle"></i>Server
-                                        maintenance</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-check-circle"></i>Backup
-                                        completed</a></li>
+                                <li><a class="dropdown-item text-center" href="{% url 'notifications' %}">View All
+                                        Notifications</a></li>
                             </ul>
                         </div>
 
@@ -712,6 +773,153 @@
         });
         {% endif %}
         {% endfor %}
+    </script>
+
+    <script>
+        // CSRF token for Django
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // DateTime update function
+        function updateDateTime() {
+            var now = new Date();
+            var date = now.toLocaleDateString();
+            var time = now.toLocaleTimeString();
+            document.getElementById('date-time').textContent = date + ' ' + time;
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Notification functions
+        function loadNotifications() {
+            fetch('/notifications/latest/')
+                .then(response => response.json())
+                .then(data => {
+                    updateNotificationBell(data.unread_count);
+                    displayNotifications(data.notifications);
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                });
+        }
+
+        function updateNotificationBell(count) {
+            const countElement = document.getElementById('notification-count');
+            const bellElement = document.getElementById('notification-bell');
+
+            if (count > 0) {
+                countElement.textContent = count;
+                countElement.style.display = 'inline';
+                bellElement.style.display = 'inline-flex';
+            } else {
+                countElement.style.display = 'none';
+            }
+        }
+
+        function displayNotifications(notifications) {
+            const notificationList = document.getElementById('notification-list');
+            const notificationSection = document.getElementById('notification-section');
+
+            if (notifications.length > 0) {
+                notificationSection.style.display = 'block';
+                notificationList.innerHTML = notifications.slice(0, 3).map(notification => `
+                <div class="notification-item ${notification.is_read ? '' : 'unread'}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="notification-title">${notification.title}</div>
+                            <div class="notification-message">${notification.message}</div>
+                            <div class="notification-time">${formatTime(notification.created_at)}</div>
+                        </div>
+                        ${!notification.is_read ? `
+                            <button class="mark-read-btn" onclick="markAsRead(${notification.id})">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+            } else {
+                notificationSection.style.display = 'none';
+            }
+        }
+
+        function markAsRead(notificationId) {
+            fetch(`/notifications/mark-read/${notificationId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        loadNotifications(); // Refresh notifications
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notification as read:', error);
+                });
+        }
+
+        function showToastNotification(notification) {
+            const toast = document.getElementById('toast-notification');
+            const title = document.getElementById('toast-title');
+            const message = document.getElementById('toast-message');
+            const time = document.getElementById('toast-time');
+
+            title.textContent = notification.title;
+            message.textContent = notification.message;
+            time.textContent = 'Just now';
+
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+
+        function formatTime(timeString) {
+            const date = new Date(timeString);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)} minutes ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
+            return date.toLocaleDateString();
+        }
+
+        // Check for new notifications every 30 seconds
+        let lastNotificationCount = 0;
+
+        function checkForNewNotifications() {
+            fetch('/notifications/latest/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.unread_count > lastNotificationCount && lastNotificationCount > 0) {
+                        // New notification received
+                        if (data.notifications.length > 0) {
+                            showToastNotification(data.notifications[0]);
+                        }
+                    }
+                    lastNotificationCount = data.unread_count;
+                    updateNotificationBell(data.unread_count);
+                    displayNotifications(data.notifications);
+                })
+                .catch(error => {
+                    console.error('Error checking for new notifications:', error);
+                });
+        }
+
+        // Initialize notifications on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadNotifications();
+
+            // Start polling for new notifications
+            setInterval(checkForNewNotifications, 30000);
+        });
     </script>
     {% endblock sweet_alert %}
 

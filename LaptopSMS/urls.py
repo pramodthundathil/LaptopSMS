@@ -35,6 +35,7 @@ urlpatterns = [
     path('inwardEdit/<int:pid>/', views.inwardEdit, name='inwardEdit'),
     path('inwardHistory/', views.inwardHistory, name='inwardHistory'),
     path('serviceDetails/<int:sid>', views.serviceDetails, name='serviceDetails'),
+    path('update_service_cost/<int:pk>', views.update_service_cost, name='update_service_cost'),
     path('logout/', views.logout, name='logout'),
     path('keep-alive/', views.keep_alive, name='keep_alive'), 
     path('delivery/<int:did>', views.delivery, name='delivery'),
@@ -46,7 +47,15 @@ urlpatterns = [
     path('delivery/<int:did>/', views.delivery_details, name='delivery_details'),
     path('brands/', views.brands, name="brands"),
     path('delete_brand/<int:pk>/', views.delete_brand, name='delete_brand'),
+# notification system
 
+    path("notifications",views.notifications,name="notifications"),
+     path('notifications/', views.notifications, name='notifications'),
+    path('notifications/mark-read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/count/', views.get_notifications_count, name='notifications_count'),
+    path('notifications/latest/', views.get_latest_notifications, name='latest_notifications'),
+
+    path("notification_mark_read/<int:pk>",views.notification_mark_read,name="notification_mark_read")
 
 
 
