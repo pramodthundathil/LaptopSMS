@@ -385,7 +385,10 @@
                 <span class="notification-count" id="notification-count">{{unread_count}}</span>
             </a>
         </div>
+        
+
         <p class="text-center dashboard-title mb-5">Service Center Dashboard</p>
+        
         
         <!-- Notification Panel (Only show if user has notifications) -->
         <div class="row g-4 mb-4" id="notification-section" style="display: none;">
@@ -403,13 +406,13 @@
                 </div>
             </div>
         </div>
-        
+        {% if request.user.is_superuser %}
         <div class="row g-4">
             <div class="col-lg-2 col-md-6">
                 <div class="metric-card">
                     <a href="{% url 'inwardHistory' %}">
                         <div class="card-body text-center">
-                            <h5 class="metric-title">Inwarded Laptops</h5>
+                            <h5 class="metric-title">Inwarded PC</h5>
                             <p class="metric-value">{{product_inward_count}}</p>
                         </div>
                     </a>
@@ -420,7 +423,8 @@
                     <a href="{% url 'inwardHistory' %}">
                         <div class="card-body text-center">
                             <h5 class="metric-title">Pending for Service</h5>
-                            <p class="metric-value">{{pendingService_count}}</p>
+                            <p class="metric-value">{{servicePending_in}}</p>
+                            <span class="text-success">Total Sent For Service: {{pendingService_count}} </span>
                         </div>
                     </a>
                 </div>
@@ -429,7 +433,7 @@
                 <div class="metric-card">
                     <a href="{% url 'serviceHistory' %}">
                         <div class="card-body text-center">
-                            <h5 class="metric-title">Laptops in Service</h5>
+                            <h5 class="metric-title">PC in Service</h5>
                             <p class="metric-value">{{servicePending}}</p>
                         </div>
                     </a>
@@ -438,7 +442,7 @@
             <div class="col-lg-2 col-md-6">
                 <div class="metric-card">
                     <div class="card-body text-center">
-                        <h5 class="metric-title">Total Serviced Laptops</h5>
+                        <h5 class="metric-title">Total Serviced PC</h5>
                         <p class="metric-value">{{serviceDone}}</p>
                     </div>
                 </div>
@@ -446,7 +450,7 @@
             <div class="col-lg-2 col-md-6">
                 <div class="metric-card">
                     <div class="card-body text-center">
-                        <h5 class="metric-title">Laptops Delivered</h5>
+                        <h5 class="metric-title">PC Delivered</h5>
                         <p class="metric-value">{{ count_deliveries }}</p>
                     </div>
                 </div>
@@ -535,6 +539,64 @@
                 </div>
             </div>
         </div>
+        {% else %}
+<div class="row g-4 flex-warp" style="justify-content: center;">
+            
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <a href="{% url 'inwardHistory' %}">
+                        <div class="card-body text-center">
+                            <h5 class="metric-title">Pending for Service</h5>
+                            <p class="metric-value">{{pendingService_count}}</p>
+                            <p class=""></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <a href="{% url 'serviceHistory' %}">
+                        <div class="card-body text-center">
+                            <h5 class="metric-title">PC in Service</h5>
+                            <p class="metric-value">{{servicePending}}</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <div class="card-body text-center">
+                        <h5 class="metric-title">Total Serviced PC</h5>
+                        <p class="metric-value">{{serviceDone}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <div class="card-body text-center">
+                        <h5 class="metric-title">PC Delivered</h5>
+                        <p class="metric-value">{{ count_deliveries }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="metric-card">
+                    <div class="card-body text-center">
+                        <h5 class="metric-title">Inward to Service Conversion (%)</h5>
+                        <p class="metric-value">{{ inward_to_service }}%</p>
+                        <!-- {% if inward_to_service <= 40 %}
+                        <span class="status-badge status-poor">Poor Performance</span>
+                        {% elif inward_to_service > 40 and inward_to_service <= 50 %}
+                        <span class="status-badge status-moderate">Moderate Performance</span>
+                        {% else %}
+                        <span class="status-badge status-great">Great Performance</span>
+                        {% endif %} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
     </div>
 </section>
 

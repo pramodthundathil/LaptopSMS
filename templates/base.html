@@ -476,7 +476,12 @@
                         <div class="brand-icon">
                             <i class="bi bi-bar-chart-steps"></i>
                         </div>
+                        {% if request.user.is_superuser %}
                         <span>Admin Panel</span>
+                        {% else %}
+                        <span>Employee Panel</span>
+
+                        {% endif %}
                     </a>
 
                     <!-- Mobile Toggle -->
@@ -491,18 +496,19 @@
                             <i class="bi bi-window-dash"></i>
                             Dashboard
                         </a>
+                        {% if request.user.is_superuser%}
 
                         <a href="{% url 'inward' %}"
                             class="nav-item-custom {% if request.path == inward %}active{% endif %}">
                             <i class="bi bi-pc-display-horizontal"></i>
                             Products Inward
                         </a>
-
                         <a href="{% url 'inwardHistory' %}"
                             class="nav-item-custom {% if request.path == inwardHistory %}active{% endif %}">
                             <i class="bi bi-clock-history"></i>
                             Inward History
                         </a>
+                        {% endif %}
 
                         <a href="{% url 'serviceHistory' %}"
                             class="nav-item-custom {% if request.path == serviceHistory %}active{% endif %}">
@@ -521,6 +527,7 @@
                             <i class="bi bi-people-fill"></i>
                             Team Members
                         </a>
+                        {% if request.user.is_superuser%}
 
                         <div class="dropdown">
                             <button class="nav-item-custom dropdown-toggle" type="button" data-bs-toggle="dropdown"
@@ -544,7 +551,7 @@
                                 </li>
                             </ul>
                         </div>
-
+                        {% endif %}
                         <!-- Right Section (Mobile) -->
                         <div class="right-section d-lg-none">
 
@@ -620,19 +627,21 @@
                                     {% if notifications %}
                                     {% for notification in notifications %}
                                     {% if not notification.is_read %}
-                                    <a style="text-decoration: none; color: black;" href="{%url 'notification_mark_read' notification.id %}">
-                                    <div class="notification-item {% if not notification.is_read %}unread{% endif %}">
-                                        <div class="notification-content">
-                                            {{ notification.message }}
+                                    <a style="text-decoration: none; color: black;"
+                                        href="{%url 'notification_mark_read' notification.id %}">
+                                        <div
+                                            class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                                            <div class="notification-content">
+                                                {{ notification.message }}
+                                            </div>
+                                            <div class="notification-meta">
+                                                <span class="notification-time">{{ notification.created_at|timesince }}
+                                                    ago</span>
+                                                {% if not notification.is_read %}
+                                                <span class="unread-indicator"></span>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                        <div class="notification-meta">
-                                            <span class="notification-time">{{ notification.created_at|timesince }}
-                                                ago</span>
-                                            {% if not notification.is_read %}
-                                            <span class="unread-indicator"></span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
                                     </a>
                                     {% endif %}
                                     {% endfor %}

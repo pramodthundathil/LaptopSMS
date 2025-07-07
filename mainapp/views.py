@@ -26,22 +26,33 @@ def dashboard(request):
     count_deliveries = Delivery.objects.count()
     notifications = Notification.objects.filter(user=request.user)
     unread_count = notifications.filter(is_read=False).count()
-    
+    pendingService_count = Service.objects.filter(serviceStatus = 	"Sent For Service").count()
+    servicePending = Service.objects.filter(serviceStatus = 	"Service Ongoing").count()
+    serviceDone = Service.objects.filter(serviceStatus = 	"Service Done").count()
+    servicePending_in = Service.objects.filter(
+                serviceStatus__in=['Service Pending', 'Components Not available']).count()
+
+
+    if not request.user.is_superuser:
+        service = Service.objects.filter( serviceTechnician__user = request.user )
+        count_deliveries = Delivery.objects.filter(service__serviceTechnician__user = request.user).count()
+        service_count = service.count()
+
     # Calculate Service count
-    serviceDone=0
-    servicePending = 0
-    for i in service:
-        if i.serviceStatus == 'Service Done':
-            serviceDone += 1
-        elif i.serviceStatus == 'Service Pending' or i.serviceStatus == 'Components Not available':
-            servicePending += 1
+    # serviceDone=0
+    # servicePending = 0
+    # for i in service:
+    #     if i.serviceStatus == 'Service Done':
+    #         serviceDone += 1
+    #     elif i.serviceStatus == 'Service Pending' or i.serviceStatus == 'Components Not available':
+    #         servicePending += 1
             
     # calculate customer satisfaction %
     satisfaction_count = Delivery.objects.filter(customerSatisfaction='Satisfied').count()
     customer_satisfaction = int((satisfaction_count / count_deliveries) * 100) if count_deliveries > 0 else 0
     
     # calculate pending services
-    pendingService_count = product_inward_count - service_count
+    # pendingService_count = product_inward_count - service_count
     
     # calculate inward to service ratio
     if product_inward_count == 0:
@@ -81,6 +92,7 @@ def dashboard(request):
         'customer_satisfaction':customer_satisfaction,
         'daily_revenue': daily_revenue,
         'monthly_revenue': monthly_revenue,
+        "servicePending_in":servicePending_in
         
     }
     return render(request, 'index.html', context)
@@ -508,7 +520,11 @@ def service(request, pid):
 
 @login_required
 def serviceHistory(request):
-    service = Service.objects.all().order_by('-id')
+    if request.user.is_superuser:
+        service = Service.objects.all().order_by('-id')
+    else:
+        service = Service.objects.filter(serviceTechnician__user = request.user).order_by('-id')
+
     context = {
         'service' : service,
     }
@@ -576,7 +592,12 @@ def delivery(request, did):
 
 def deliveryHistory(request):
     services = Service.objects.all()
-    deliveries = Delivery.objects.all().order_by('-id')
+    if request.user.is_superuser:
+        deliveries = Delivery.objects.all().order_by('-id')
+
+    else:
+        deliveries = Delivery.objects.filter(service__serviceTechnician__user = request.user).order_by('-id')
+
     
     context = {
         'services': services,
