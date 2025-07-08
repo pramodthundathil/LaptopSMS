@@ -568,7 +568,10 @@ def delivery(request, did):
         delivery = Delivery.objects.create(
             service=service,
             customerSatisfaction=customerSatisfaction,
-            deliveredOnTime=deliveredOnTime
+            deliveredOnTime=deliveredOnTime,
+            customer = customer,
+            product = product
+
         )
         delivery.save()
         
@@ -750,5 +753,115 @@ def notification_mark_read(request,pk):
     return redirect("serviceDetails", sid = notification.service.id )
 
 
+# tax calculations
 
+from .models import Tax
+from .forms import TaxForm, InventoryForm
+
+@login_required(login_url='signin')
+def AddTax(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        tax_rate = request.POST.get('tax')
+        tax = Tax.objects.create(tax_name = name,tax_percentage = tax_rate )
+        tax.save()
+        messages.success(request,'Tax Value Added Success')
+        return redirect("ListTax")
+    return render(request,"add-tax-slab.html")
+
+@login_required(login_url='signin')
+def ListTax(request):
+    tax = Tax.objects.all()
+    context = {
+        "tax":tax
+    }
+    return render(request,"list-tax.html",context)
+
+@login_required(login_url="signin")
+def delete_tax(request,pk):
+    tax = get_object_or_404(Tax,pk=pk)
+    tax.delete()
+    messages.success(request,'Tax Value Deleted Success')
+    return redirect("ListTax")
+
+@login_required(login_url="signin")
+def tax_single_update(request,pk):
+    tax = get_object_or_404(Tax,pk=pk)
+    form = TaxForm(instance = tax)
+    if request.method == "POST":
+        form = TaxForm(request.POST,instance = tax)
+        if form.is_valid():
+            tax = form.save()
+            tax.save()
+            messages.success(request,'Tax Value Updated Success')
+            return redirect("ListTax")
+    return render(request,"tax-single.html",{"form":form})
+
+
+@login_required
+def inventory(request):
+    inventories = Inventory.objects.all().order_by("-id")
+    form = InventoryForm()
+    
+    if request.method == "POST":
+        form = InventoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Inventory added successfully!")
+            return redirect("inventory")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    
+    return render(request, 'inventory.html', {
+        "inventories": inventories,
+        "form": form
+    })
+
+@login_required
+def edit_inventory(request, inventory_id):
+    inventory = get_object_or_404(Inventory, id=inventory_id)
+    form = InventoryForm( instance=inventory)
+    if request.method == "POST":
+        form = InventoryForm(request.POST, instance=inventory)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Inventory updated successfully!")
+            return redirect("inventory")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    
+    return render(request,"inventory_single.html",{"form":form})
+
+@login_required
+def delete_inventory(request, inventory_id):
+    inventory = get_object_or_404(Inventory, id=inventory_id)
+    inventory_name = inventory.name
+    inventory.delete()
+    messages.success(request, f"Inventory item '{inventory_name}' has been deleted successfully!")
+    return redirect("inventory")
+
+
+
+# invoice 
+
+def generate_invoice_html(request, delivery_id):
+    """Generate HTML invoice for a delivery"""
+    delivery = get_object_or_404(Delivery, id=delivery_id)
+    
+    # Calculate total cost
+    total_cost = 0
+    if delivery.service:
+        total_cost = delivery.service.serviceCost
+    
+    # Generate invoice number
+    invoice_number = f"INV-{delivery.id:06d}"
+    
+    context = {
+        'delivery': delivery,
+        'invoice_number': invoice_number,
+        'invoice_date': datetime.datetime.now().strftime('%Y-%m-%d'),
+        'total_cost': total_cost,
+    }
+    
+    return render(request, 'invoice.html', context)
 

@@ -55,10 +55,21 @@ urlpatterns = [
     path('notifications/count/', views.get_notifications_count, name='notifications_count'),
     path('notifications/latest/', views.get_latest_notifications, name='latest_notifications'),
 
-    path("notification_mark_read/<int:pk>",views.notification_mark_read,name="notification_mark_read")
+    path("notification_mark_read/<int:pk>",views.notification_mark_read,name="notification_mark_read"),
 
+    # tax calculations 
+    path("AddTax/", views.AddTax, name="AddTax"),
+    path("ListTax/", views.ListTax, name="ListTax"),
+    path("delete_tax/<int:pk>", views.delete_tax, name="delete_tax"),
+    path("tax_single_update/<int:pk>", views.tax_single_update, name="tax_single_update"),
 
+    # inventory
+    path("inventory",views.inventory,name="inventory"),
+    path('edit_inventory/<int:inventory_id>/', views.edit_inventory, name='edit_inventory'),
+    path('delete_inventory/<int:inventory_id>/', views.delete_inventory, name='delete_inventory'),
 
+    # invoice
+    path("generate_invoice_html/<int:delivery_id>",views.generate_invoice_html,name="generate_invoice_html")
     
   
 

@@ -1,0 +1,70 @@
+
+{% extends 'base.html' %}
+{% block title %}Tax Single {% endblock title %}
+
+{% block body %}
+
+<style>
+    .category-add-list {
+        width: 80% !important;
+        margin: auto;
+
+    }
+
+    @media (max-width:700px) {
+
+        .category-add-list {
+            width: 100% !important;
+
+        }
+    }
+</style>
+
+<div class="category-add-list">
+
+    <div class="content-page">
+        <div class="container-fluid add-form-list">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Tax Single Update</h4>
+                                <!-- {% for message in messages %}
+                            <div class="alert {{message.tags}} " role="alert">
+                                <div class="iq-alert-text"><b></b> {{message}}</div>
+                             </div>
+                             {% endfor %} -->
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" data-toggle="validator" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="row">
+                                    {% for field in form %}
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{field.label}}</label>
+                                            {{field}}
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                   
+                                </div>
+                                <button type="submit" class="btn btn-primary mr-2">Update Tax</button>
+                                <button type="reset" class="btn btn-danger">Reset</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Page end  -->
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock body %}

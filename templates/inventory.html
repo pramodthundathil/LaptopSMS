@@ -1,0 +1,417 @@
+{% extends 'base.html' %}
+{% block title %}Inventory{% endblock title %}
+
+{% block body %}
+<section class="service-history">
+    <div class="container-fluid p-5">
+        <div class="row mb-2">
+            <div class="col-lg-12">
+                <p class="text-center h4 fw-bold mb-4 mx-1 mx-md-4 mt-1">Inventory</p>
+                <button type="button" class="btn btn-primary mb-5" data-bs-toggle="modal"
+                    data-bs-target="#inventoryModal" onclick="openAddModal()">
+                    <i class="bi bi-plus"></i> Add Inventory
+                </button>
+            </div>
+        </div>
+        <div class="container-fluid border shadow rounded-5 p-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover w-100" id="ServiceTable">
+                            <thead>
+                                <tr>
+                                    <th>Inventory Code</th>
+                                    <th>Name</th>
+                                    <th>Brand</th>
+                                    <th>Stock</th>
+                                    <th>Base Product</th>
+                                    <th>Value</th>
+                                    <th>Purchase Price</th>
+                                    <th>Date Created</th>
+                                    <th>Date Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body">
+                                {% for inventory in inventories %}
+                                <tr>
+                                    <td>{{ inventory.inventory_code }}</td>
+                                    <td>{{ inventory.name }}</td>
+                                    <td>{{ inventory.brand_name }}</td>
+                                    <td>{{ inventory.stock }}</td>
+                                    <td>{{ inventory.base_product }}</td>
+                                    <td>{{ inventory.value|default:"-" }}</td>
+                                    <td>₹{{ inventory.rate_of_purchase|default:"-" }}</td>
+                                    <td>{{ inventory.date_added|date:"d M Y" }}</td>
+                                    <td>{{ inventory.date_created|date:"d M Y" }}</td>
+                                    <td>
+                                        <a href="{%url 'edit_inventory' inventory.id %}"
+                                            class="btn btn-sm btn-warning me-1" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                    </a>
+                                        <button onclick="confirmDelete({{ inventory.id }})"
+                                            class="btn btn-sm btn-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Inventory Modal -->
+<div class="modal fade" id="inventoryModal" tabindex="-1" aria-labelledby="inventoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="inventoryModalLabel">
+                    <i class="bi bi-box-seam me-2"></i><span id="modal-title">Add Inventory</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <form method="post" id="inventoryForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                {% csrf_token %}
+                                <input type="hidden" id="inventory_id" name="inventory_id">
+                                <input type="hidden" id="form_method" name="form_method" value="add">
+                                
+                                <!-- Product Name -->
+                                <label for="productName" class="form-label">
+                                    <i class="bi bi-file-earmark-bar-graph"></i> Product Name
+                                </label>
+                                {{ form.name }}
+                                
+                                <!-- Brand Name -->
+                                <label for="brandName" class="form-label mt-3">
+                                    <i class="bi bi-apple"></i> Brand Name
+                                </label>
+                                {{ form.brand_name }}
+                                
+                                <!-- Base Product -->
+                                <label for="baseProduct" class="form-label mt-3">
+                                    <i class="bi bi-box-seam"></i> Base Product
+                                </label>
+                                {{ form.base_product }}
+
+                                <!-- Value of Item -->
+                                <label for="value" class="form-label mt-3">
+                                   <i class="bi bi-memory"></i> Value of Item
+                                </label>
+                                {{ form.value }}
+
+                                <!-- Rate of Purchase -->
+                                <label for="rateOfPurchase" class="form-label mt-3">
+                                    <i class="bi bi-cash-coin"></i> Rate of Purchase
+                                </label>
+                                {{ form.rate_of_purchase }}
+
+                                <!-- Stock Quantity -->
+                                <label for="stockQty" class="form-label mt-3">
+                                    <i class="bi bi-123"></i> Stock Quantity
+                                </label>
+                                {{ form.stock }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i><span id="submit-text">Save Inventory</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
+
+{% block script %}
+{{ block.super }}
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Check if DataTable is available
+        if (typeof $.fn.DataTable === 'undefined') {
+            console.error('DataTables is not loaded');
+            return;
+        }
+
+        $('#ServiceTable').DataTable({
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            order: [[0, "desc"]],
+            searching: true,
+            paging: true,
+            pagingType: "full_numbers",
+            responsive: true,
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                '<"row"<"col-sm-12 col-md-2"B>>' +
+                '<"row"<"col-sm-12"tr>>' +
+                '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+            buttons: [
+                {
+                    extend: 'excel',
+                    className: 'btn btn-sm btn-primary m-2',
+                    text: '<i class="bi bi-filetype-xls"></i> Excel'
+                },
+                {
+                    extend: 'pdf',
+                    className: 'btn btn-sm btn-danger m-2',
+                    text: '<i class="bi bi-filetype-pdf"></i> PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                }
+            ],
+            columnDefs: [
+                {
+                    targets: [9], // Actions column
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    targets: [7, 8], // Date columns
+                    type: "date"
+                },
+                {
+                    targets: [7, 8],
+                    width: "15%"
+                }
+            ],
+            language: {
+                search: "Search records:",
+                lengthMenu: "Show _MENU_ entries per page",
+                info: "Showing _START_ to _END_ of _TOTAL_ inventory records",
+                infoEmpty: "No inventory records available",
+                infoFiltered: "(filtered from _MAX_ total records)",
+                zeroRecords: "No matching inventory records found",
+                emptyTable: "No inventory records available in table",
+                paginate: {
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous"
+                }
+            },
+            processing: true,
+            scrollX: true,
+            scrollCollapse: true,
+            stateSave: true,
+            stateDuration: 60 * 60 * 24
+        });
+
+        // Custom search functionality
+        $('#ServiceTable_filter input').attr('placeholder', 'Search inventory records...');
+        $('#ServiceTable_filter input').addClass('form-control form-control-sm');
+        $('#ServiceTable_length select').addClass('form-select form-select-sm');
+
+        // Optional: Add row click functionality
+        $('#ServiceTable tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            } else {
+                $('#ServiceTable tbody tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    });
+
+    // Functions for modal operations
+    function openAddModal() {
+        const modalTitle = document.getElementById('modal-title');
+        const submitText = document.getElementById('submit-text');
+        const inventoryForm = document.getElementById('inventoryForm');
+        const inventoryId = document.getElementById('inventory_id');
+        const formMethod = document.getElementById('form_method');
+        
+        if (modalTitle) modalTitle.textContent = 'Add Inventory';
+        if (submitText) submitText.textContent = 'Save Inventory';
+        if (inventoryForm) inventoryForm.action = '';
+        if (inventoryId) inventoryId.value = '';
+        if (formMethod) formMethod.value = 'add';
+        
+        // Clear all form fields safely
+        const fields = ['id_name', 'id_brand_name', 'id_base_product', 'id_value', 'id_rate_of_purchase', 'id_stock'];
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) field.value = '';
+        });
+        
+        // Reset base_product select to first option
+        const baseProductField = document.getElementById('id_base_product');
+        if (baseProductField) baseProductField.selectedIndex = 0;
+    }
+
+    function openEditModal(id, name, brand_name, base_product, value, rate_of_purchase, stock) {
+        // Update modal title and button text
+        const modalTitle = document.getElementById('modal-title');
+        const submitText = document.getElementById('submit-text');
+        const inventoryForm = document.getElementById('inventoryForm');
+        const inventoryId = document.getElementById('inventory_id');
+        const formMethod = document.getElementById('form_method');
+        
+        if (modalTitle) modalTitle.textContent = 'Edit Inventory';
+        if (submitText) submitText.textContent = 'Update Inventory';
+        if (inventoryForm) inventoryForm.action = '/edit_inventory/' + id + '/';
+        if (inventoryId) inventoryId.value = id;
+        if (formMethod) formMethod.value = 'edit';
+        
+        // Debug: Log the values being passed
+        console.log('Edit values:', {id, name, brand_name, base_product, value, rate_of_purchase, stock});
+        
+        // Populate form fields safely
+        const nameField = document.getElementById('id_name');
+        const brandNameField = document.getElementById('id_brand_name');
+        const baseProductField = document.getElementById('id_base_product');
+        const valueField = document.getElementById('id_value');
+        const rateField = document.getElementById('id_rate_of_purchase');
+        const stockField = document.getElementById('id_stock');
+        
+        if (nameField) {
+            nameField.value = name || '';
+            console.log('Name field set to:', nameField.value);
+        }
+        if (brandNameField) {
+            brandNameField.value = brand_name || '';
+            console.log('Brand name field set to:', brandNameField.value);
+        }
+        if (baseProductField) {
+            baseProductField.value = base_product || '';
+            console.log('Base product field set to:', baseProductField.value);
+        }
+        if (valueField) {
+            valueField.value = (value === 'None' || value === 'null' || value === null) ? '' : value || '';
+            console.log('Value field set to:', valueField.value);
+        }
+        if (rateField) {
+            rateField.value = (rate_of_purchase === 'None' || rate_of_purchase === 'null' || rate_of_purchase === null) ? '' : rate_of_purchase || '';
+            console.log('Rate field set to:', rateField.value);
+        }
+        if (stockField) {
+            stockField.value = stock || '';
+            console.log('Stock field set to:', stockField.value);
+        }
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('inventoryModal'));
+        modal.show();
+    }
+
+    function confirmDelete(inventoryId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the inventory item permanently!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Delete!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/delete_inventory/${inventoryId}/`;
+            }
+        });
+    }
+</script>
+
+<style>
+    /* Custom styles for DataTable */
+    .dataTables_wrapper .dataTables_filter {
+        float: right;
+        margin-bottom: 1rem;
+    }
+
+    .dataTables_wrapper .dataTables_length {
+        float: left;
+        margin-bottom: 1rem;
+    }
+
+    .dataTables_wrapper {
+        width: 100% !important;
+    }
+
+    .dataTables_wrapper .dt-buttons {
+        margin-bottom: 1rem;
+    }
+
+    .dataTables_wrapper .dataTables_info {
+        padding-top: 0.75rem;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        float: right;
+        margin-top: 0.5rem;
+    }
+
+    #ServiceTable {
+        width: 100% !important;
+        table-layout: auto;
+    }
+
+    /* Row selection styling */
+    #ServiceTable tbody tr.selected {
+        background-color: #007bff !important;
+        color: white;
+    }
+
+    /* Responsive table styling */
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+
+        .dt-buttons {
+            flex-wrap: wrap;
+        }
+
+        .dt-buttons .btn {
+            margin-bottom: 0.25rem;
+        }
+    }
+
+    /* Search highlight styling */
+    .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    /* Action buttons styling */
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+</style>
+
+{% endblock script %}

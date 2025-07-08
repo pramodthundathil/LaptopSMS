@@ -142,3 +142,56 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"{self.title} - {self.user.username}"
+    
+class Tax(models.Model):
+    tax_name = models.CharField(max_length=20)
+    tax_percentage = models.FloatField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return '{}  {} %'.format(str(self.tax_name),(self.tax_percentage))
+
+class Inventory(models.Model):
+    inventory_code = models.CharField(max_length=8, unique=True, editable=False)
+
+
+    name = models.CharField(max_length=200)
+    brand_name = models.CharField(max_length=100)
+    base_product = models.CharField(
+        max_length=100,
+        choices=(
+            ("Laptop", "Laptop"),
+            ("Desktop", "Desktop"),
+            ("Monitor Part", "Monitor Part"),
+            ("Keyboard", "Keyboard"),
+            ("Motherboard", "Motherboard"),
+            ("RAM", "RAM"),
+            ("Hard Disk", "Hard Disk"),
+            ("SSD", "SSD"),
+            ("Battery", "Battery"),
+            ("Charger", "Charger"),
+            ("Screen", "Screen"),
+            ("Mouse", "Mouse"),
+            ("Printer", "Printer"),
+            ("Other", "Other"),
+            )
+        )
+    value = models.CharField(max_length=100, help_text="Values like 16Gb, 500SSD", null=True, blank=True)
+    rate_of_purchase = models.FloatField(null=True, blank=True)
+    stock = models.IntegerField()
+    date_added= models.DateField(auto_now_add=True)
+
+    date_created = models.DateField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.inventory_code:
+            while True:
+                code = f"IN{''.join(random.choices(string.digits, k=6))}"
+                if not Inventory.objects.filter(inventory_code=code).exists():
+                    self.inventory_code = code
+                    break
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.name)
+
