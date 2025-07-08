@@ -1,0 +1,460 @@
+{% extends 'base.html' %}
+{% block title %}Analytics Dashboard{% endblock title %}
+
+{% block body %}
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<div style="width:95%; margin: auto;">
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Analytics Dashboard</h1>
+                
+                <!-- Month/Year Selection -->
+                <form method="GET" class="d-flex align-items-center">
+                    <div class="form-group mr-3 mb-0">
+                        <label for="month" class="sr-only">Month</label>
+                        <select name="month" id="month" class="form-control form-control-sm">
+                            <option value="1" {% if selected_month == 1 %}selected{% endif %}>January</option>
+                            <option value="2" {% if selected_month == 2 %}selected{% endif %}>February</option>
+                            <option value="3" {% if selected_month == 3 %}selected{% endif %}>March</option>
+                            <option value="4" {% if selected_month == 4 %}selected{% endif %}>April</option>
+                            <option value="5" {% if selected_month == 5 %}selected{% endif %}>May</option>
+                            <option value="6" {% if selected_month == 6 %}selected{% endif %}>June</option>
+                            <option value="7" {% if selected_month == 7 %}selected{% endif %}>July</option>
+                            <option value="8" {% if selected_month == 8 %}selected{% endif %}>August</option>
+                            <option value="9" {% if selected_month == 9 %}selected{% endif %}>September</option>
+                            <option value="10" {% if selected_month == 10 %}selected{% endif %}>October</option>
+                            <option value="11" {% if selected_month == 11 %}selected{% endif %}>November</option>
+                            <option value="12" {% if selected_month == 12 %}selected{% endif %}>December</option>
+                        </select>
+                    </div>
+                    <div class="form-group mr-3 mb-0">
+                        <label for="year" class="sr-only">Year</label>
+                        <select name="year" id="year" class="form-control form-control-sm">
+                            <option value="2020" {% if selected_year == 2020 %}selected{% endif %}>2020</option>
+                            <option value="2021" {% if selected_year == 2021 %}selected{% endif %}>2021</option>
+                            <option value="2022" {% if selected_year == 2022 %}selected{% endif %}>2022</option>
+                            <option value="2023" {% if selected_year == 2023 %}selected{% endif %}>2023</option>
+                            <option value="2024" {% if selected_year == 2024 %}selected{% endif %}>2024</option>
+                            <option value="2025" {% if selected_year == 2025 %}selected{% endif %}>2025</option>
+                            <option value="2026" {% if selected_year == 2026 %}selected{% endif %}>2026</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards Row -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Products Inward</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_products_inward }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-laptop fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Services Completed</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_services }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-tools fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Monthly Revenue</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹{{ total_monthly_revenue|floatformat:2 }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-currency-rupee fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Deliveries</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_deliveries }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-truck fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secondary Stats Row -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Products Checked</div>
+                    <div class="h6 mb-0">{{ products_checked }}/{{ total_products_inward }} ({{ check_percentage }}%)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">On-Time Delivery</div>
+                    <div class="h6 mb-0">{{ on_time_deliveries }}/{{ total_deliveries }} ({{ on_time_percentage }}%)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Avg Service Cost</div>
+                    <div class="h6 mb-0">₹{{ avg_service_cost|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Active Team</div>
+                    <div class="h6 mb-0">{{ active_team_members }} Members</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- Product Status Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Product Status Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="productStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Brand Distribution Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Top Brands</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="brandChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Charts Row -->
+    <div class="row mb-4">
+        <!-- Customer Satisfaction Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Customer Satisfaction</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="satisfactionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Trend Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">6-Month Trend</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables Row -->
+    <div class="row">
+        <!-- Technician Performance Table -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Technician Performance</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Technician</th>
+                                    <th>Services Count</th>
+                                    <th>Total Revenue</th>
+                                    <th>Avg Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tech in technician_performance %}
+                                <tr>
+                                    <td>{{ tech.serviceTechnician__empName|default:"N/A" }}</td>
+                                    <td>{{ tech.services_count }}</td>
+                                    <td>₹{{ tech.total_cost|floatformat:2 }}</td>
+                                    <td>₹{{ tech.avg_cost|floatformat:2 }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No data available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Stats</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="small text-muted">Total Customers</div>
+                        <div class="h5 text-primary">{{ total_customers }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="small text-muted">Repeat Customers</div>
+                        <div class="h5 text-success">{{ repeat_customers }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="small text-muted">Low Stock Items</div>
+                        <div class="h5 text-warning">{{ low_stock_items }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="small text-muted">Unread Notifications</div>
+                        <div class="h5 text-danger">{{ unread_notifications }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="small text-muted">Inventory Value</div>
+                        <div class="h5 text-info">₹{{ total_inventory_value|floatformat:2 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<script>
+// Chart data from Django
+const chartData = JSON.parse('{{ chart_data|escapejs }}');
+
+// Color palette
+const colors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69', '#f8f9fc'];
+
+// Product Status Chart
+if (chartData.productStatus.length > 0) {
+    const ctx1 = document.getElementById('productStatusChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: chartData.productStatus.map(item => item.productStatus),
+            datasets: [{
+                data: chartData.productStatus.map(item => item.count),
+                backgroundColor: colors.slice(0, chartData.productStatus.length),
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+// Brand Chart
+if (chartData.brandData.length > 0) {
+    const ctx2 = document.getElementById('brandChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: chartData.brandData.map(item => item.brand),
+            datasets: [{
+                label: 'Products',
+                data: chartData.brandData.map(item => item.count),
+                backgroundColor: '#4e73df',
+                borderColor: '#2e59d9',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Customer Satisfaction Chart
+if (chartData.satisfactionData.length > 0) {
+    const ctx3 = document.getElementById('satisfactionChart').getContext('2d');
+    new Chart(ctx3, {
+        type: 'pie',
+        data: {
+            labels: chartData.satisfactionData.map(item => item.customerSatisfaction || 'Not Specified'),
+            datasets: [{
+                data: chartData.satisfactionData.map(item => item.count),
+                backgroundColor: ['#1cc88a', '#f6c23e', '#e74a3b'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+// Monthly Trend Chart
+if (chartData.monthlyComparison.length > 0) {
+    const ctx4 = document.getElementById('monthlyTrendChart').getContext('2d');
+    new Chart(ctx4, {
+        type: 'line',
+        data: {
+            labels: chartData.monthlyComparison.map(item => item.month),
+            datasets: [{
+                label: 'Products Inward',
+                data: chartData.monthlyComparison.map(item => item.count),
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                borderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Auto-submit form when month/year changes
+document.getElementById('month').addEventListener('change', function() {
+    this.form.submit();
+});
+document.getElementById('year').addEventListener('change', function() {
+    this.form.submit();
+});
+</script>
+
+<style>
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.border-left-primary {
+    border-left: 4px solid #4e73df !important;
+}
+
+.border-left-success {
+    border-left: 4px solid #1cc88a !important;
+}
+
+.border-left-info {
+    border-left: 4px solid #36b9cc !important;
+}
+
+.border-left-warning {
+    border-left: 4px solid #f6c23e !important;
+}
+
+.text-primary {
+    color: #4e73df !important;
+}
+
+.text-success {
+    color: #1cc88a !important;
+}
+
+.text-info {
+    color: #36b9cc !important;
+}
+
+.text-warning {
+    color: #f6c23e !important;
+}
+
+.text-danger {
+    color: #e74a3b !important;
+}
+
+.shadow {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+canvas {
+    max-height: 300px;
+}
+</style>
+{% endblock body %}

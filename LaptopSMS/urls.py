@@ -69,7 +69,10 @@ urlpatterns = [
     path('delete_inventory/<int:inventory_id>/', views.delete_inventory, name='delete_inventory'),
 
     # invoice
-    path("generate_invoice_html/<int:delivery_id>",views.generate_invoice_html,name="generate_invoice_html")
+    path("generate_invoice_html/<int:delivery_id>",views.generate_invoice_html,name="generate_invoice_html"),
+
+    # analytics
+    path('analytics_dashboard', views.analytics_dashboard, name='analytics_dashboard'),
     
   
 

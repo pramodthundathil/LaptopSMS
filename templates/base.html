@@ -543,7 +543,7 @@
                                         Brands</a></li>
                                 <li><a class="dropdown-item" href="{%url 'inventory' %}"><i class="bi bi-file-earmark-bar-graph"></i>
                                         Inventory</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-bell"></i> Analytics</a></li>
+                                <li><a class="dropdown-item" href="{%url 'analytics_dashboard' %}"><i class="bi bi-bell"></i> Analytics</a></li>
                                 <li><a class="dropdown-item" href="{%url 'ListTax' %}"><i
                                             class="bi bi-file-spreadsheet"></i> Tax </a>
                                 </li>
@@ -559,7 +559,7 @@
                         <div class="right-section d-lg-none">
 
 
-                            <div class="dropdown">
+                            <!-- <div class="dropdown">
                                 <button class="notification-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                     <i class="bi bi-bell"></i>
@@ -571,7 +571,7 @@
                                         <h6 class="dropdown-header">Recent Notifications</h6>
                                     </li>
                                     <div id="notificationDropdownContent">
-                                        <!-- Dynamic content will be loaded here -->
+                                        
                                     </div>
                                     <li>
                                         <hr class="dropdown-divider">
@@ -579,9 +579,10 @@
                                     <li><a class="dropdown-item text-center" href="{% url 'notifications' %}">View All
                                             Notifications</a></li>
                                 </ul>
-                            </div>
-
-                            <div class="dropdown profile-dropdown">
+                            </div> -->
+<a class="dropdown-item text-danger nav-link" href="{% url 'logout' %}"><i
+                                                class="bi bi-box-arrow-right"></i> Logout</a>
+                            <!-- <div class="dropdown profile-dropdown">
                                 <div class="profile-avatar dropdown-toggle" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                     {{ user.first_name.0|default:"A" }}
@@ -595,8 +596,8 @@
                                     </li>
                                     <li><a class="dropdown-item" href="{% url 'profile' %}"><i
                                                 class="bi bi-person-bounding-box"></i>My Profile</a></li>
-                                    <!-- <li><a class="dropdown-item" href="{% url 'profile_update' user.id %}"><i
-                                                class="fas fa-cog"></i>Settings</a></li> -->
+                                    <li><a class="dropdown-item" href="{% url 'profile_update' user.id %}"><i
+                                                class="fas fa-cog"></i>Settings</a></li>
                                     {% if user.is_superuser %}
                                     <li><a class="dropdown-item" href="/admin"><i class="fas fa-shield-alt"></i>Admin
                                             Panel</a></li>
@@ -607,7 +608,7 @@
                                     <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
                                                 class="bi bi-box-arrow-right"></i> Logout</a></li>
                                 </ul>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -674,19 +675,18 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i>My
+                                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person-square"></i>My
                                         Profile</a></li>
-                                <li><a class="dropdown-item" href="{% url 'profile_update' user.id %}"><i
-                                            class="fas fa-cog"></i>Settings</a></li>
+                                <li><a class="dropdown-item" href="{% url 'profile_update' user.id %}"><i class="bi bi-gear"></i>Settings</a></li>
                                 {% if user.is_superuser %}
-                                <li><a class="dropdown-item" href="/admin"><i class="fas fa-shield-alt"></i>Admin
-                                        Panel</a></li>
+                                <!-- <li><a class="dropdown-item" href="/admin"><i class="fas fa-shield-alt"></i>Admin
+                                        Panel</a></li> -->
                                 {% endif %}
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
-                                            class="fas fa-sign-out-alt"></i>Logout</a></li>
+                                                class="bi bi-box-arrow-right"></i>Logout</a></li>
                             </ul>
                         </div>
                     </div>

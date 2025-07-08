@@ -12,6 +12,8 @@ from datetime import timedelta, date
 from django.db.models import Avg
 from decimal import Decimal
 from django.db.models import Case, When, Value, IntegerField
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 
@@ -37,6 +39,7 @@ def dashboard(request):
         service = Service.objects.filter( serviceTechnician__user = request.user )
         count_deliveries = Delivery.objects.filter(service__serviceTechnician__user = request.user).count()
         service_count = service.count()
+        serviceDone = serviceDone = Service.objects.filter(serviceStatus = 	"Service Done",serviceTechnician__user = request.user ).count()
 
     # Calculate Service count
     # serviceDone=0
@@ -99,8 +102,8 @@ def dashboard(request):
 
 def validate_password(password):
     # Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character
-    if not re.search(r"(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}", password):
-        return False
+    # if not re.search(r"(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}", password):
+    #     return False
     return True
 
 def signup(request):
@@ -166,23 +169,58 @@ def profile(request):
 @login_required
 def profileUpdate(request, uid):
     user = get_object_or_404(User, id=uid)
+    
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        profile_img = request.FILES.get('profile_img') 
+        # Handle profile update
+        if 'update_profile' in request.POST:
+            name = request.POST.get('name')
+            email = request.POST.get('email')
+            profile_img = request.FILES.get('profile_img') 
 
-        user.first_name = name
-        user.email = email
+            user.first_name = name
+            user.email = email
+            
+            if profile_img:
+                user.profile_img = profile_img
+                print("image updated")
+            user.save()
+
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('profile')
         
-        if profile_img:
-            user.profile_img = profile_img
-            print("image updated")
-        user.save()
-
-        messages.success(request, 'Your profile has been updated successfully!')
-        return redirect('profile')
+        # Handle password change
+        elif 'change_password' in request.POST:
+            current_password = request.POST.get('current_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            # Check current password
+            if not user.check_password(current_password):
+                messages.error(request, 'Current password is incorrect.')
+                return render(request, 'updateProfile.html', {'user': request.user})
+            
+            # Check if new passwords match
+            if new_password != confirm_password:
+                messages.error(request, 'New passwords do not match.')
+                return render(request, 'updateProfile.html', {'user': request.user})
+            
+            # Check password strength (optional)
+            # if len(new_password) < 8:
+            #     messages.error(request, 'Password must be at least 8 characters long.')
+            #     return render(request, 'updateProfile.html', {'user': request.user})
+            
+            # Update password
+            user.set_password(new_password)
+            user.save()
+            
+            # Keep user logged in after password change
+            update_session_auth_hash(request, user)
+            
+            messages.success(request, 'Your password has been changed successfully!')
+            return redirect('profile')
 
     return render(request, 'updateProfile.html', {'user': request.user})
+
 
 @login_required
 def keep_alive(request):
@@ -865,3 +903,194 @@ def generate_invoice_html(request, delivery_id):
     
     return render(request, 'invoice.html', context)
 
+
+# analytics 
+
+from django.shortcuts import render
+from django.db.models import Count, Sum, Q, Avg
+from django.db.models.functions import TruncMonth, TruncYear
+from django.utils import timezone
+from datetime import datetime, timedelta
+import json
+from .models import (
+    ProductInward, Service, Delivery, Customer, Team, 
+    Revenue, Inventory, Notification
+)
+
+def analytics_dashboard(request):
+    # Get current date
+    current_date = timezone.now()
+    
+    # Get selected month and year from request (default to current)
+    selected_month = int(request.GET.get('month', current_date.month))
+    selected_year = int(request.GET.get('year', current_date.year))
+    
+    # Create date range for selected month
+    start_date = datetime(selected_year, selected_month, 1)
+    if selected_month == 12:
+        end_date = datetime(selected_year + 1, 1, 1) - timedelta(days=1)
+    else:
+        end_date = datetime(selected_year, selected_month + 1, 1) - timedelta(days=1)
+    
+    # 1. Product Inward Analytics
+    products_inward = ProductInward.objects.filter(
+        inwardDate__range=[start_date, end_date]
+    )
+    
+    total_products_inward = products_inward.count()
+    products_checked = products_inward.filter(productChecked=True).count()
+    products_pending = products_inward.filter(productChecked=False).count()
+    
+    # Product status distribution
+    product_status_data = products_inward.values('productStatus').annotate(
+        count=Count('id')
+    ).order_by('productStatus')
+    
+    # Brand-wise product distribution
+    brand_data = products_inward.values('brand').annotate(
+        count=Count('id')
+    ).order_by('-count')[:10]  # Top 10 brands
+    
+    # 2. Service Analytics
+    services = Service.objects.filter(
+        serviceDate__range=[start_date, end_date]
+    )
+    
+    total_services = services.count()
+    total_service_cost = services.aggregate(Sum('serviceCost'))['serviceCost__sum'] or 0
+    avg_service_cost = services.aggregate(Avg('serviceCost'))['serviceCost__avg'] or 0
+    
+    # Service status distribution
+    service_status_data = services.values('serviceStatus').annotate(
+        count=Count('id')
+    ).order_by('serviceStatus')
+    
+    # Technician performance
+    technician_performance = services.values(
+        'serviceTechnician__empName'
+    ).annotate(
+        services_count=Count('id'),
+        total_cost=Sum('serviceCost')
+    ).order_by('-services_count')
+    
+    # 3. Delivery Analytics
+    deliveries = Delivery.objects.filter(
+        deliveryDate__range=[start_date, end_date]
+    )
+    
+    total_deliveries = deliveries.count()
+    on_time_deliveries = deliveries.filter(deliveredOnTime='Yes').count()
+    
+    # Customer satisfaction
+    satisfaction_data = deliveries.values('customerSatisfaction').annotate(
+        count=Count('id')
+    ).order_by('customerSatisfaction')
+    
+    # 4. Revenue Analytics
+    revenue_data = Revenue.objects.filter(
+        date__range=[start_date, end_date]
+    )
+    
+    total_monthly_revenue = revenue_data.aggregate(
+        Sum('daily_revenue')
+    )['daily_revenue__sum'] or 0
+    
+    # Daily revenue chart data
+    daily_revenue_chart = revenue_data.values('date', 'daily_revenue').order_by('date')
+    
+    # 5. Customer Analytics
+    customers = Customer.objects.filter(
+        product_inward__inwardDate__range=[start_date, end_date]
+    ).distinct()
+    
+    total_customers = customers.count()
+    repeat_customers = customers.filter(
+        product_inward__inwardDate__lt=start_date
+    ).count()
+    
+    # 6. Team Analytics
+    active_team_members = Team.objects.filter(is_active=True).count()
+    
+    # Position-wise team distribution
+    position_data = Team.objects.filter(is_active=True).values('position').annotate(
+        count=Count('id')
+    ).order_by('position')
+    
+    # 7. Inventory Analytics
+    low_stock_items = Inventory.objects.filter(stock__lt=10).count()
+    total_inventory_value = Inventory.objects.aggregate(
+        total_value=Sum('rate_of_purchase')
+    )['total_value'] or 0
+    
+    # 8. Monthly comparison data (last 6 months)
+    six_months_ago = current_date - timedelta(days=180)
+    monthly_comparison = ProductInward.objects.filter(
+        inwardDate__gte=six_months_ago
+    ).annotate(
+        month=TruncMonth('inwardDate')
+    ).values('month').annotate(
+        count=Count('id')
+    ).order_by('month')
+    
+    # 9. Notifications count
+    unread_notifications = Notification.objects.filter(
+        is_read=False,
+        created_at__range=[start_date, end_date]
+    ).count()
+    
+    # Prepare chart data for JavaScript
+    chart_data = {
+        'productStatus': list(product_status_data),
+        'brandData': list(brand_data),
+        'serviceStatus': list(service_status_data),
+        'satisfactionData': list(satisfaction_data),
+        'positionData': list(position_data),
+        'monthlyComparison': [
+            {
+                'month': item['month'].strftime('%Y-%m'),
+                'count': item['count']
+            } for item in monthly_comparison
+        ],
+        'dailyRevenue': [
+            {
+                'date': item['date'].strftime('%Y-%m-%d'),
+                'revenue': float(item['daily_revenue'])
+            } for item in daily_revenue_chart
+        ]
+    }
+    
+    context = {
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'current_date': current_date,
+        
+        # Summary cards data
+        'total_products_inward': total_products_inward,
+        'products_checked': products_checked,
+        'products_pending': products_pending,
+        'total_services': total_services,
+        'total_service_cost': total_service_cost,
+        'avg_service_cost': avg_service_cost,
+        'total_deliveries': total_deliveries,
+        'on_time_deliveries': on_time_deliveries,
+        'total_monthly_revenue': total_monthly_revenue,
+        'total_customers': total_customers,
+        'repeat_customers': repeat_customers,
+        'active_team_members': active_team_members,
+        'low_stock_items': low_stock_items,
+        'total_inventory_value': total_inventory_value,
+        'unread_notifications': unread_notifications,
+        
+        # Table data
+        'technician_performance': technician_performance,
+        'brand_data': brand_data,
+        
+        # Chart data
+        'chart_data': json.dumps(chart_data),
+        
+        # Additional metrics
+        'on_time_percentage': round((on_time_deliveries / total_deliveries * 100) if total_deliveries > 0 else 0, 2),
+        'check_percentage': round((products_checked / total_products_inward * 100) if total_products_inward > 0 else 0, 2),
+    }
+    
+    return render(request, 'analytics_dashboard.html', context)
