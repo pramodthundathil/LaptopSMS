@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% block title %}Service Form{% endblock title %}
+
+{% block body %}
+<style>
+    .service-form-page {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding: 1rem;
+    }
+
+    .form-title {
+        text-align: center;
+        color: #1e293b;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .form-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e13359;
+        display: inline-block;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-label i {
+        margin-right: 0.5rem;
+        color: #2563eb;
+        width: 16px;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.9rem;
+        background: white;
+        transition: border-color 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+
+    .form-control:disabled {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        color: #6b7280;
+    }
+
+    .readonly-field {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #6b7280;
+        padding: 0.6rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        transform: translateY(-1px);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .form-card {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="service-form-page">
+    <h1 class="form-title">Service Form</h1>
+
+    <div class="form-card">
+        <form action="{% url 'service' pid=product.id %}" method="post">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <!-- Left Column -->
+                <div class="form-column">
+                    <div class="form-section">
+                        <h3 class="section-title">Product Information</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-gear"></i>
+                                Service ID
+                            </label>
+                            <div class="readonly-field">Auto Generated</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-arrow-right-square"></i>
+                                Inward ID
+                            </label>
+                            <div class="readonly-field">{{product.id}}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-laptop"></i>
+                                Brand
+                            </label>
+                            <div class="readonly-field">{{product.brand}}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-tag"></i>
+                                Model
+                            </label>
+                            <div class="readonly-field">{{product.model}}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-hash"></i>
+                                Product Serial No.
+                            </label>
+                            <div class="readonly-field">{{product.serialNo}}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="problem">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Problem
+                            </label>
+                            <textarea class="form-control" id="problem" rows="3" name="problem">{{product.problem}}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="form-column">
+                    <div class="form-section">
+                        <h3 class="section-title">Service Details</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="remark">
+                                <i class="bi bi-chat-left-text"></i>
+                                Remark
+                            </label>
+                            <textarea class="form-control" id="remark" rows="3" name="remark">{{product.remark}}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-calendar-check"></i>
+                                Date of Inward
+                            </label>
+                            <div class="readonly-field">{{product.commitmentDate|date:'Y-m-d' }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="component">
+                                <i class="bi bi-wrench"></i>
+                                Components Used
+                            </label>
+                            <input type="text" id="component" class="form-control" name="component" value="{{ service.component }}"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="serviceRemark">
+                                <i class="bi bi-tools"></i>
+                                Service Remark
+                            </label>
+                            <input type="text" id="serviceRemark" class="form-control" name="serviceRemark" value="{{ service.serviceRemark }}"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="serviceCost">
+                                <i class="bi bi-currency-rupee"></i>
+                                Service Cost (INR)
+                            </label>
+                            <input type="number" id="serviceCost" class="form-control" name="serviceCost" value="{{ service.serviceCost }}"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="serviceTechnician">
+                                <i class="bi bi-person-gear"></i>
+                                Service Technician
+                            </label>
+                            <select id="serviceTechnician" class="form-select" name="serviceTechnician">
+                                <option value="" selected disabled>Select Service Technician</option>
+                                {% for technician in technicians %}
+                                <option value="{{ technician.id }}" {% if service and service.serviceTechnician and service.serviceTechnician.id == technician.id %}selected{% endif %}>
+                                    {{ technician.empName }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="serviceStatus">
+                                <i class="bi bi-check-circle"></i>
+                                Service Status
+                            </label>
+                            <select id="serviceStatus" class="form-select" name="serviceStatus">
+                                <option value="" disabled {% if not service.serviceStatus %}selected{% endif %}>Select status</option>
+                                <option value="Service Done" {% if service.serviceStatus == 'Service Done' %}selected{% endif %}>Service Done</option>
+                                <option value="Service Pending" {% if service.serviceStatus == 'Service Pending' %}selected{% endif %}>Service Pending</option>
+                                <option value="Service Ongoing" {% if service.serviceStatus == 'Service Ongoing' %}selected{% endif %}>Service Ongoing</option>
+                                <option value="Sent For Service" {% if service.serviceStatus == 'Sent For Service' %}selected{% endif %}>Sent For Service</option>
+                                <!-- <option value="Delivered" {% if service.serviceStatus == 'Delivered' %}selected{% endif %}>Delivered</option> -->
+                                <option value="Components Not available" {% if service.serviceStatus == 'Components Not available' %}selected{% endif %}>Components Not available</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center" style="margin-top: 2rem;">
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-check-lg"></i> Submit Service Form
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock body %}

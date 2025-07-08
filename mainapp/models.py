@@ -78,6 +78,7 @@ class Team(models.Model):
 class Service(models.Model):
     service_id = models.CharField(max_length=7, unique=True, editable=False)
     component = models.CharField(max_length=100, null=True)
+    component_inventory = models.ManyToManyField("Inventory")
     serviceRemark = models.CharField(max_length=100, null=True,blank=True)
     serviceStatus = models.CharField(max_length=30, null=True,blank=True)
     serviceCost = models.FloatField(default=0)

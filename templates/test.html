@@ -67,7 +67,6 @@
         font-size: 0.9rem;
         background: white;
         transition: border-color 0.2s ease;
-        width: 100%;
     }
 
     .form-control:focus, .form-select:focus {
@@ -114,96 +113,35 @@
         gap: 2rem;
     }
 
-    /* Inventory Selection Styles */
-    .inventory-selector {
-        background: #f8fafc;
+    /* Component Selection Styles */
+    .component-selection {
         border: 1px solid #e2e8f0;
         border-radius: 8px;
         padding: 1rem;
+        background: #f8fafc;
         margin-bottom: 1rem;
     }
 
-    .inventory-search {
-        margin-bottom: 1rem;
-    }
-
-    .inventory-dropdown {
-        background: white;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        max-height: 200px;
-        overflow-y: auto;
-        display: none;
-        position: absolute;
-        z-index: 1000;
-        width: 100%;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    .inventory-dropdown.show {
-        display: block;
-    }
-
-    .inventory-item {
+    .component-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         padding: 0.75rem;
-        border-bottom: 1px solid #e2e8f0;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: white;
+        margin-bottom: 0.5rem;
+        transition: all 0.2s ease;
     }
 
-    .inventory-item:hover {
+    .component-item:hover {
+        border-color: #2563eb;
         background: #f1f5f9;
     }
 
-    .inventory-item:last-child {
-        border-bottom: none;
-    }
-
-    .inventory-name {
-        font-weight: 600;
-        color: #1e293b;
-        font-size: 0.9rem;
-    }
-
-    .inventory-details {
-        font-size: 0.8rem;
-        color: #6b7280;
-        margin-top: 0.25rem;
-    }
-
-    .inventory-stock {
-        font-size: 0.8rem;
-        color: #059669;
-        font-weight: 500;
-    }
-
-    .inventory-stock.low {
-        color: #dc2626;
-    }
-
-    .selected-components {
-        background: #f0f9ff;
-        border: 1px solid #0ea5e9;
-        border-radius: 6px;
-        padding: 1rem;
-        margin-top: 1rem;
-    }
-
-    .selected-components h4 {
-        color: #0369a1;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-    }
-
-    .selected-component {
-        background: white;
-        border: 1px solid #bae6fd;
-        border-radius: 4px;
-        padding: 0.75rem;
-        margin-bottom: 0.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .component-item.selected {
+        border-color: #2563eb;
+        background: #eff6ff;
     }
 
     .component-info {
@@ -222,10 +160,21 @@
         margin-top: 0.25rem;
     }
 
-    .quantity-section {
+    .component-stock {
+        font-size: 0.8rem;
+        color: #059669;
+        font-weight: 500;
+    }
+
+    .component-stock.low {
+        color: #dc2626;
+    }
+
+    .quantity-control {
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        margin-left: 1rem;
     }
 
     .quantity-btn {
@@ -260,6 +209,31 @@
         font-size: 0.8rem;
     }
 
+    .selected-components {
+        background: #f0f9ff;
+        border: 1px solid #0ea5e9;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .selected-components h4 {
+        color: #0369a1;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .selected-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+        border: 1px solid #bae6fd;
+    }
+
     .remove-btn {
         background: #dc2626;
         color: white;
@@ -268,25 +242,10 @@
         padding: 0.25rem 0.5rem;
         font-size: 0.7rem;
         cursor: pointer;
-        margin-left: 0.5rem;
     }
 
     .remove-btn:hover {
         background: #b91c1c;
-    }
-
-    .search-container {
-        position: relative;
-    }
-
-    .components-display {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        padding: 0.75rem;
-        min-height: 40px;
-        font-size: 0.9rem;
-        color: #6b7280;
     }
 
     @media (max-width: 768px) {
@@ -299,12 +258,13 @@
             padding: 1rem;
         }
 
-        .selected-component {
+        .component-item {
             flex-direction: column;
             align-items: flex-start;
         }
 
-        .quantity-section {
+        .quantity-control {
+            margin-left: 0;
             margin-top: 0.5rem;
         }
     }
@@ -374,53 +334,45 @@
 
                     <!-- Components Section -->
                     <div class="form-section">
-                        <h3 class="section-title">Components Selection</h3>
+                        <h3 class="section-title">Components Used</h3>
                         
-                        <div class="form-group">
+                        <div class="component-selection">
                             <label class="form-label">
                                 <i class="bi bi-wrench"></i>
-                                Add Components from Inventory
+                                Select Components from Inventory
                             </label>
                             
-                            <div class="inventory-selector">
-                                <div class="search-container">
-                                    <input type="text" class="form-control" id="inventorySearch" placeholder="Search inventory items...">
-                                    <div class="inventory-dropdown" id="inventoryDropdown">
-                                        {% for inventory in inventories %}
-                                        <div class="inventory-item" data-id="{{ inventory.id }}" data-name="{{ inventory.name }}" data-brand="{{ inventory.brand_name }}" data-product="{{ inventory.base_product }}" data-value="{{ inventory.value }}" data-stock="{{ inventory.stock }}">
-                                            <div class="inventory-name">{{ inventory.name }}</div>
-                                            <div class="inventory-details">
-                                                {{ inventory.brand_name }} - {{ inventory.base_product }}
-                                                {% if inventory.value %} | {{ inventory.value }}{% endif %}
-                                            </div>
-                                            <div class="inventory-stock {% if inventory.stock < 5 %}low{% endif %}">
-                                                Stock: {{ inventory.stock }}
-                                            </div>
+                            <div id="component-list">
+                                {% for inventory in inventories %}
+                                <div class="component-item" data-id="{{ inventory.id }}" data-stock="{{ inventory.stock }}">
+                                    <div class="component-info">
+                                        <div class="component-name">{{ inventory.name }}</div>
+                                        <div class="component-details">
+                                            {{ inventory.brand_name }} - {{ inventory.base_product }}
+                                            {% if inventory.value %} | {{ inventory.value }}{% endif %}
                                         </div>
-                                        {% endfor %}
+                                        <div class="component-stock {% if inventory.stock < 5 %}low{% endif %}">
+                                            Stock: {{ inventory.stock }}
+                                        </div>
+                                    </div>
+                                    <div class="quantity-control" style="display: none;">
+                                        <button type="button" class="quantity-btn" onclick="decreaseQuantity({{ inventory.id }})">-</button>
+                                        <input type="number" class="quantity-input" id="qty-{{ inventory.id }}" min="1" max="{{ inventory.stock }}" value="1">
+                                        <button type="button" class="quantity-btn" onclick="increaseQuantity({{ inventory.id }})">+</button>
                                     </div>
                                 </div>
+                                {% endfor %}
                             </div>
 
                             <!-- Selected Components Display -->
-                            <div id="selectedComponents" class="selected-components" style="display: none;">
+                            <div id="selected-components" class="selected-components" style="display: none;">
                                 <h4><i class="bi bi-check-circle"></i> Selected Components</h4>
-                                <div id="selectedComponentsList"></div>
+                                <div id="selected-list"></div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="bi bi-list-ul"></i>
-                                Components Used (Display)
-                            </label>
-                            <div class="components-display" id="componentsDisplay">
-                                No components selected
-                            </div>
-                        </div>
-
-                        <!-- Hidden inputs for form submission -->
-                        <div id="hiddenInputs"></div>
+                        <!-- Hidden inputs for selected components -->
+                        <div id="hidden-inputs"></div>
                     </div>
                 </div>
 
@@ -505,131 +457,92 @@
 
 <script>
     let selectedComponents = {};
-    let allInventoryItems = [];
     
-    // Initialize inventory items
-    document.querySelectorAll('.inventory-item').forEach(item => {
-        allInventoryItems.push({
-            id: item.dataset.id,
-            name: item.dataset.name,
-            brand: item.dataset.brand,
-            product: item.dataset.product,
-            value: item.dataset.value,
-            stock: parseInt(item.dataset.stock)
-        });
-    });
-
     // Initialize existing components if editing
-    {% if service and service.component_inventory.all %}
+    {% if service.component_inventory.all %}
         {% for component in service.component_inventory.all %}
             selectedComponents[{{ component.id }}] = {
                 id: {{ component.id }},
                 name: "{{ component.name }}",
                 brand: "{{ component.brand_name }}",
-                product: "{{ component.base_product }}",
-                value: "{{ component.value }}",
-                stock: {{ component.stock }},
-                quantity: 1
+                quantity: 1 // You might want to store quantity in a separate model
             };
         {% endfor %}
-        updateDisplay();
+        updateSelectedDisplay();
     {% endif %}
 
-    // Search functionality
-    const searchInput = document.getElementById('inventorySearch');
-    const dropdown = document.getElementById('inventoryDropdown');
-
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        
-        if (searchTerm.length > 0) {
-            dropdown.classList.add('show');
+    // Add click event to component items
+    document.querySelectorAll('.component-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const stock = parseInt(this.dataset.stock);
             
-            // Filter and display items
-            const filteredItems = allInventoryItems.filter(item => 
-                item.name.toLowerCase().includes(searchTerm) ||
-                item.brand.toLowerCase().includes(searchTerm) ||
-                item.product.toLowerCase().includes(searchTerm)
-            );
+            if (stock === 0) {
+                alert('This component is out of stock!');
+                return;
+            }
             
-            dropdown.innerHTML = '';
-            filteredItems.forEach(item => {
-                if (item.stock > 0) {
-                    const div = document.createElement('div');
-                    div.className = 'inventory-item';
-                    div.innerHTML = `
-                        <div class="inventory-name">${item.name}</div>
-                        <div class="inventory-details">
-                            ${item.brand} - ${item.product}
-                            ${item.value ? ' | ' + item.value : ''}
-                        </div>
-                        <div class="inventory-stock ${item.stock < 5 ? 'low' : ''}">
-                            Stock: ${item.stock}
-                        </div>
-                    `;
-                    div.addEventListener('click', () => selectComponent(item));
-                    dropdown.appendChild(div);
-                }
-            });
-        } else {
-            dropdown.classList.remove('show');
-        }
+            if (selectedComponents[id]) {
+                // Remove if already selected
+                removeComponent(id);
+            } else {
+                // Add to selected
+                selectComponent(id);
+            }
+        });
     });
 
-    // Hide dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!searchInput.contains(event.target) && !dropdown.contains(event.target)) {
-            dropdown.classList.remove('show');
-        }
-    });
-
-    function selectComponent(item) {
-        if (selectedComponents[item.id]) {
-            alert('Component already selected!');
-            return;
-        }
+    function selectComponent(id) {
+        const item = document.querySelector(`[data-id="${id}"]`);
+        const name = item.querySelector('.component-name').textContent;
+        const brand = item.querySelector('.component-details').textContent.split(' - ')[0];
+        const stock = parseInt(item.dataset.stock);
         
-        if (item.stock === 0) {
-            alert('This component is out of stock!');
-            return;
-        }
-        
-        selectedComponents[item.id] = {
-            id: item.id,
-            name: item.name,
-            brand: item.brand,
-            product: item.product,
-            value: item.value,
-            stock: item.stock,
-            quantity: 1
+        selectedComponents[id] = {
+            id: id,
+            name: name,
+            brand: brand,
+            quantity: 1,
+            maxStock: stock
         };
         
-        updateDisplay();
-        searchInput.value = '';
-        dropdown.classList.remove('show');
+        item.classList.add('selected');
+        item.querySelector('.quantity-control').style.display = 'flex';
+        
+        updateSelectedDisplay();
     }
 
     function removeComponent(id) {
         delete selectedComponents[id];
-        updateDisplay();
+        const item = document.querySelector(`[data-id="${id}"]`);
+        item.classList.remove('selected');
+        item.querySelector('.quantity-control').style.display = 'none';
+        
+        updateSelectedDisplay();
     }
 
-    function updateQuantity(id, change) {
+    function increaseQuantity(id) {
         const component = selectedComponents[id];
-        if (!component) return;
-        
-        const newQuantity = component.quantity + change;
-        if (newQuantity >= 1 && newQuantity <= component.stock) {
-            component.quantity = newQuantity;
-            updateDisplay();
+        if (component && component.quantity < component.maxStock) {
+            component.quantity++;
+            document.getElementById(`qty-${id}`).value = component.quantity;
+            updateSelectedDisplay();
         }
     }
 
-    function updateDisplay() {
-        const selectedDiv = document.getElementById('selectedComponents');
-        const selectedList = document.getElementById('selectedComponentsList');
-        const componentsDisplay = document.getElementById('componentsDisplay');
-        const hiddenInputs = document.getElementById('hiddenInputs');
+    function decreaseQuantity(id) {
+        const component = selectedComponents[id];
+        if (component && component.quantity > 1) {
+            component.quantity--;
+            document.getElementById(`qty-${id}`).value = component.quantity;
+            updateSelectedDisplay();
+        }
+    }
+
+    function updateSelectedDisplay() {
+        const selectedDiv = document.getElementById('selected-components');
+        const selectedList = document.getElementById('selected-list');
+        const hiddenInputs = document.getElementById('hidden-inputs');
         
         // Clear previous content
         selectedList.innerHTML = '';
@@ -639,60 +552,50 @@
         
         if (componentCount === 0) {
             selectedDiv.style.display = 'none';
-            componentsDisplay.innerHTML = 'No components selected';
             return;
         }
         
         selectedDiv.style.display = 'block';
         
-        const componentNames = [];
-        
         Object.values(selectedComponents).forEach(component => {
             // Create display item
             const selectedItem = document.createElement('div');
-            selectedItem.className = 'selected-component';
+            selectedItem.className = 'selected-item';
             selectedItem.innerHTML = `
-                <div class="component-info">
-                    <div class="component-name">${component.name}</div>
-                    <div class="component-details">
-                        ${component.brand} - ${component.product}
-                        ${component.value ? ' | ' + component.value : ''}
-                    </div>
+                <div>
+                    <strong>${component.name}</strong> (${component.brand})
+                    <span style="color: #6b7280;"> - Qty: ${component.quantity}</span>
                 </div>
-                <div class="quantity-section">
-                    <button type="button" class="quantity-btn" onclick="updateQuantity(${component.id}, -1)" ${component.quantity <= 1 ? 'disabled' : ''}>-</button>
-                    <input type="number" class="quantity-input" value="${component.quantity}" min="1" max="${component.stock}" onchange="setQuantity(${component.id}, this.value)">
-                    <button type="button" class="quantity-btn" onclick="updateQuantity(${component.id}, 1)" ${component.quantity >= component.stock ? 'disabled' : ''}>+</button>
-                    <button type="button" class="remove-btn" onclick="removeComponent(${component.id})">Remove</button>
-                </div>
+                <button type="button" class="remove-btn" onclick="removeComponent(${component.id})">
+                    Remove
+                </button>
             `;
             selectedList.appendChild(selectedItem);
             
-            // Add to component names for display
-            componentNames.push(`${component.name} (x${component.quantity})`);
-            
-            // Create hidden input for form submission
+            // Create hidden input
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
             hiddenInput.name = 'component_inventory';
             hiddenInput.value = `${component.id}:${component.quantity}`;
             hiddenInputs.appendChild(hiddenInput);
         });
-        
-        // Update components display
-        componentsDisplay.innerHTML = componentNames.join(', ');
     }
 
-    function setQuantity(id, value) {
-        const component = selectedComponents[id];
-        if (!component) return;
-        
-        const quantity = parseInt(value);
-        if (quantity >= 1 && quantity <= component.stock) {
-            component.quantity = quantity;
-            updateDisplay();
+    // Update quantity when input changes
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('quantity-input')) {
+            const id = e.target.id.replace('qty-', '');
+            const quantity = parseInt(e.target.value);
+            const component = selectedComponents[id];
+            
+            if (component && quantity >= 1 && quantity <= component.maxStock) {
+                component.quantity = quantity;
+                updateSelectedDisplay();
+            } else {
+                e.target.value = component.quantity;
+            }
         }
-    }
+    });
 </script>
 
 {% endblock body %}

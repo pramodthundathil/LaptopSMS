@@ -505,6 +505,8 @@ def inwardEdit(request,pid):
     }
     return render(request, 'inwardEdit.html', context)
 
+from django.db import transaction
+
 @login_required
 def service(request, pid):
     product = get_object_or_404(ProductInward, id=pid)
@@ -512,46 +514,120 @@ def service(request, pid):
     
     technician_positions = ['Laptop Technician', 'Computer Technician', 'Chip-level Technician']
     technicians = Team.objects.filter(position__in=technician_positions, is_active=True)
-    print(technicians,"-------------------------------------")
+    
+    # Get all inventory items for component selection
+    inventories = Inventory.objects.filter(stock__gt=0).order_by('name')
+    
     if request.method == "POST":
-        component = request.POST.get('component')
         serviceRemark = request.POST.get('serviceRemark')
         serviceStatus = request.POST.get('serviceStatus')
         serviceCost = request.POST.get('serviceCost') or 0
         serviceTechnician_id = request.POST.get('serviceTechnician')
+        component_inventory_data = request.POST.getlist('component_inventory')
         
-        serviceTechnician = get_object_or_404(Team, id=serviceTechnician_id)
+        # Get technician
+        serviceTechnician = None
+        if serviceTechnician_id:
+            serviceTechnician = get_object_or_404(Team, id=serviceTechnician_id)
         
-        if service:
-            service.component = component
-            service.serviceRemark = serviceRemark
-            service.serviceStatus = serviceStatus
-            service.serviceCost = serviceCost
-            service.serviceTechnician = serviceTechnician
-        else:
-            service = Service(
-                component=component,
-                serviceRemark=serviceRemark,
-                serviceStatus=serviceStatus,
-                product=product,
-                serviceCost=serviceCost,
-                serviceTechnician=serviceTechnician
-            )
-        
-        service.save()
-     
-        product.problem = request.POST.get('problem')
-        product.remark = request.POST.get('remark')
-        product.productStatus = 'In Service'
-        product.save()
-        
-        messages.success(request, "Service Status Updated")
-        return redirect('/serviceHistory')
+        # Use transaction to ensure data consistency
+        with transaction.atomic():
+            # Create or update service
+            if service:
+                # Store old components to restore stock if needed
+                old_components = {}
+                for comp in service.component_inventory.all():
+                    # If you have a through model with quantity, get it here
+                    # For now, assuming quantity of 1 per component
+                    old_components[comp.id] = 1
+                
+                # Clear old component relationships
+                service.component_inventory.clear()
+                
+                # Update service fields
+                service.serviceRemark = serviceRemark
+                service.serviceStatus = serviceStatus
+                service.serviceCost = serviceCost
+                service.serviceTechnician = serviceTechnician
+            else:
+                # Create new service
+                service = Service(
+                    serviceRemark=serviceRemark,
+                    serviceStatus=serviceStatus,
+                    product=product,
+                    serviceCost=serviceCost,
+                    serviceTechnician=serviceTechnician
+                )
+                old_components = {}
+            
+            service.save()
+            
+            # Process component inventory
+            selected_components = {}
+            component_names = []
+            
+            for item in component_inventory_data:
+                if ':' in item:
+                    comp_id, quantity = item.split(':')
+                    comp_id = int(comp_id)
+                    quantity = int(quantity)
+                    
+                    try:
+                        inventory_item = Inventory.objects.get(id=comp_id)
+                        
+                        # Check if enough stock is available
+                        required_stock = quantity
+                        if comp_id in old_components:
+                            # If this component was used before, add back its old quantity
+                            required_stock -= old_components[comp_id]
+                        
+                        if inventory_item.stock >= required_stock:
+                            # Add to service
+                            service.component_inventory.add(inventory_item)
+                            selected_components[comp_id] = quantity
+                            component_names.append(f"{inventory_item.name} (x{quantity})")
+                            
+                            # Update stock - decrease by the difference
+                            inventory_item.stock -= required_stock
+                            inventory_item.save()
+                        else:
+                            # Rollback transaction if not enough stock
+                            raise ValueError(f"Not enough stock for {inventory_item.name}. Available: {inventory_item.stock}, Required: {required_stock}")
+                    
+                    except Inventory.DoesNotExist:
+                        raise ValueError(f"Inventory item with ID {comp_id} not found")
+            
+            # Restore stock for components that were removed
+            for old_comp_id, old_quantity in old_components.items():
+                if old_comp_id not in selected_components:
+                    # This component was removed, restore its stock
+                    try:
+                        inventory_item = Inventory.objects.get(id=old_comp_id)
+                        inventory_item.stock += old_quantity
+                        inventory_item.save()
+                    except Inventory.DoesNotExist:
+                        pass
+            
+            # Update component field with component names
+            service.component = ', '.join(component_names) if component_names else None
+            service.save()
+            
+            # Update product details
+            product.problem = request.POST.get('problem')
+            product.remark = request.POST.get('remark')
+            product.productStatus = 'In Service'
+            product.save()
+            
+            messages.success(request, "Service Status Updated Successfully")
+            return redirect('/serviceHistory')
+    
 
+    
     context = {
         'product': product,
         'service': service,
         'technicians': technicians,
+        'inventories': inventories,
     }
     
     return render(request, 'serviceForm.html', context)
