@@ -299,6 +299,25 @@
         text-decoration: none;
     }
 
+    .btn-primary-custom-1 {
+        background: linear-gradient(135deg, var(--secondary-red), #cb2d86);
+        border: none;
+        color: white;
+        padding: 12px 32px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(225, 9, 38, 0.3);
+    }
+
+    .btn-primary-custom-1:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(180, 11, 48, 0.4);
+        color: white;
+        text-decoration: none;
+    }
     /* Other Metrics Card */
     .other-metrics {
         background: var(--card-white);
@@ -524,9 +543,13 @@
     </div>
 
     <!-- Action Button -->
-    <div class="action-section">
+    <div class="action-section flex gap-3">
         <a href="{% url 'revenueData' %}" class="btn-primary-custom">
             <i class="bi bi-bar-chart"></i> View Revenue Details
+        </a>
+
+        <a href="{%url 'analytics_dashboard' %}" class="btn-primary-custom-1">
+            <i class="bi bi-bar-chart"></i> View Analytic Data
         </a>
     </div>
 
