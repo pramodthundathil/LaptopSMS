@@ -73,6 +73,9 @@ urlpatterns = [
 
     # analytics
     path('analytics_dashboard', views.analytics_dashboard, name='analytics_dashboard'),
+
+    # download DB
+    path("download_db",views.download_db,name="download_db"),
     
   
 

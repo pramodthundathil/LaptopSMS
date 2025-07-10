@@ -450,7 +450,7 @@ def inwardHistory(request):
     context = {
         'product_inward': product_inward,
     }
-    return render(request, 'inwardHistory.html', context)
+    return render(request, 'InwardHistory.html', context)
 
 @login_required
 def inwardDetail(request,pid):
@@ -1170,3 +1170,21 @@ def analytics_dashboard(request):
     }
     
     return render(request, 'analytics_dashboard.html', context)
+
+
+
+import os
+from django.conf import settings
+
+def download_db(request):
+    # Path to your SQLite database file
+    db_path = os.path.join(settings.BASE_DIR, 'db.sqlite3')
+    
+    # Check if the file exists
+    if os.path.exists(db_path):
+        with open(db_path, 'rb') as db_file:
+            response = HttpResponse(db_file.read(), content_type='application/x-sqlite3')
+            response['Content-Disposition'] = 'attachment; filename="db.sqlite3"'
+            return response
+    else:
+        raise HttpResponse("Database not found.")
