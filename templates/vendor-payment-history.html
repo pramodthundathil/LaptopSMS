@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block title %}Payment History - {{ vendor.name }}{% endblock title %}
+
+{% block body %}
+<section class="service-history">
+    <div class="container-fluid p-5">
+        <style>
+            .category-add-list {
+                width: 90% !important;
+                margin: auto;
+            }
+            @media (max-width:700px) {
+                .category-add-list {
+                    width: 100% !important;
+                }
+            }
+            .payment-card {
+                border-radius: 8px;
+                border: none;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            .timeline {
+                position: relative;
+                padding: 20px 0;
+            }
+            .timeline-item {
+                position: relative;
+                padding-left: 40px;
+                margin-bottom: 30px;
+                border-left: 2px solid #e9ecef;
+            }
+            .timeline-item:last-child {
+                border-left: 2px solid transparent;
+            }
+            .timeline-marker {
+                position: absolute;
+                left: -8px;
+                top: 0;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: #007bff;
+            }
+            .timeline-content {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 5px;
+                border-left: 3px solid #007bff;
+            }
+        </style>
+
+        <div class="category-add-list">
+            <div class="content-page">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <!-- Header -->
+                            <div class="card payment-card mb-4">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title mb-0">Payment History - {{ vendor.name }}</h4>
+                                    <a href="{% url 'view_vendor_payments' vendor.id %}" class="btn btn-primary">
+                                        Back to Payments
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Payment History Table -->
+                            <div class="card payment-card">
+                                <div class="card-header">
+                                    <h5 class="card-title">All Payment Transactions</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if transactions %}
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead class="thead-dark">
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Bill Number</th>
+                                                    <th>Amount</th>
+                                                    <th>Method</th>
+                                                    <th>Reference</th>
+                                                    <th>Notes</th>
+                                                    <th>Created By</th>
+                                                    <th>Created At</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for transaction in transactions %}
+                                                <tr>
+                                                    <td>{{ transaction.payment_date|date:"d-m-Y" }}</td>
+                                                    <td>
+                                                        <a href="#" data-toggle="tooltip" title="View Purchase Details">
+                                                            {{ transaction.purchase.purchase_bill_number }}
+                                                        </a>
+                                                    </td>
+                                                    <td>₹{{ transaction.amount|floatformat:2 }}</td>
+                                                    <td>
+                                                        <span class="badge badge-secondary">
+                                                            {{ transaction.payment_method }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ transaction.reference_number|default:"-" }}</td>
+                                                    <td>{{ transaction.notes|default:"-"|truncatechars:50 }}</td>
+                                                    <td>{{ transaction.created_by|default:"System" }}</td>
+                                                    <td>{{ transaction.created_at|date:"d-m-Y H:i" }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted">No payment history found</h5>
+                                        <p class="text-muted">No payments have been recorded for this vendor yet.</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Timeline View (Alternative representation) -->
+                            {% if transactions %}
+                            <div class="card payment-card mt-4">
+                                <div class="card-header">
+                                    <h5 class="card-title">Payment Timeline</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="timeline">
+                                        {% for transaction in transactions|slice:":10" %}
+                                        <div class="timeline-item">
+                                            <div class="timeline-marker"></div>
+                                            <div class="timeline-content">
+                                                <div class="d-flex justify-content-between">
+                                                    <h6 class="mb-1">₹{{ transaction.amount|floatformat:2 }} Payment</h6>
+                                                    <small class="text-muted">{{ transaction.payment_date|date:"d M Y" }}</small>
+                                                </div>
+                                                <p class="mb-1">
+                                                    <strong>Bill:</strong> {{ transaction.purchase.purchase_bill_number }}
+                                                    <span class="mx-2">|</span>
+                                                    <strong>Method:</strong> {{ transaction.payment_method }}
+                                                </p>
+                                                {% if transaction.reference_number %}
+                                                <p class="mb-1"><strong>Reference:</strong> {{ transaction.reference_number }}</p>
+                                                {% endif %}
+                                                {% if transaction.notes %}
+                                                <p class="mb-0 text-muted"><em>{{ transaction.notes }}</em></p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        {% if transactions.count > 10 %}
+                                        <div class="text-center">
+                                            <p class="text-muted">Showing last 10 transactions in timeline view</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Initialize tooltips
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
+{% endblock %}

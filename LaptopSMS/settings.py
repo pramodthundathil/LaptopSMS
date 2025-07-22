@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--$8a$&2ppyx3-2e4!-bj0qropo@s)g7tmql*acp@t#rz-@^!38'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    'mainapp',
+
+    'home',
+    'Finance'
 ]
 
 MIDDLEWARE = [
@@ -51,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'mainapp.middleware.AutoLogoutMiddleware',
+    'home.middleware.AutoLogoutMiddleware',
 ]
 
 ROOT_URLCONF = 'LaptopSMS.urls'
@@ -67,7 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'mainapp.context_processors.notification_context',
+                'home.context_processors.notification_context',
             ],
         },
     },
@@ -151,7 +152,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-AUTH_USER_MODEL = 'mainapp.User'
+AUTH_USER_MODEL = 'home.User'
 
 # settings.py
 
