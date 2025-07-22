@@ -47,6 +47,7 @@ urlpatterns =[
      # vendor management ......................................
 
     path("add_vendor",views.add_vendor,name="add_vendor"),
+    path("add_vendor_form_purchase/<int:pk>",views.add_vendor_form_purchase,name="add_vendor_form_purchase"),
     path("list_vendor",views.list_vendor,name="list_vendor"),
     path("update_vendor/<int:pk>",views.update_vendor,name="update_vendor"),
     path("delete_vendor/<int:pk>",views.delete_vendor,name="delete_vendor"),
@@ -54,6 +55,7 @@ urlpatterns =[
 
     # inventory
     path("inventory",views.inventory,name="inventory"),
+    path("add_inventory_form_purchase/<int:pk>",views.add_inventory_form_purchase,name="add_inventory_form_purchase"),
     path('add_inventory',views.add_inventory,name="add_inventory"),
     path('edit_inventory/<int:inventory_id>/', views.edit_inventory, name='edit_inventory'),
     path('delete_inventory/<int:inventory_id>/', views.delete_inventory, name='delete_inventory'),

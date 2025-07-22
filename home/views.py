@@ -973,6 +973,24 @@ def inventory(request):
         "form": form
     })
 
+
+@login_required
+def add_inventory_form_purchase(request, pk):
+    purchase = get_object_or_404(Purchase, id = pk)
+    if request.method == "POST":
+        form = InventoryForm(request.POST)
+        if form.is_valid():
+            inventory = form.save()
+            inventory.save()
+            order_item, created = PurchaseItems.objects.get_or_create(purchase=purchase, inventory=inventory)
+            if not created:
+                order_item.unit_price = 0
+                order_item.quantity += 1
+                order_item.save()
+            messages.success(request,"Inventory Added To list and created purchase")
+
+    return redirect('edit_purchase', pk = purchase.id)
+
 @login_required
 def add_inventory(request):
     form = InventoryForm()
@@ -1283,6 +1301,44 @@ def add_vendor(request):
         return redirect('list_vendor')
     return render(request,"add-vendor.html") 
 
+
+
+@login_required
+def add_vendor_form_purchase(request, pk):
+    purchase = get_object_or_404(Purchase, id = pk)
+    if request.method == "POST":
+        name = request.POST['name']
+        email = request.POST['email']
+        phone = request.POST['phone']
+        gst_number = request.POST['gst_number']
+        city = request.POST['city']
+        state = request.POST['state']
+        country = request.POST['country']
+        pincode = request.POST['pincode']
+        contact_info = request.POST.get('contact_info', '')
+        supply_product = request.POST['supply_product']
+
+        vendor = Vendor(
+            name=name,
+            email=email,
+            phone_number=phone,
+            gst_number=gst_number,
+            city=city,
+            state=state,
+            country=country,
+            pincode=pincode,
+            contact_info=contact_info,
+            supply_product=supply_product,
+        )
+        vendor.save()
+        purchase.supplier = vendor
+        purchase.save()
+        messages.success(request, 'Vendor added successfully')
+        return redirect('edit_purchase', pk = pk)
+    return redirect('edit_purchase', pk = pk)
+     
+
+
 # displaying vendor list 
 @login_required
 def list_vendor(request):
@@ -1369,7 +1425,8 @@ def edit_purchase(request,pk):
         # 'form': form,
         "order":purchase,
         "supplier":supplier,
-        "product":product
+        "product":product,
+        "form" : InventoryForm(),
     }
     return render(request, 'update-purchase.html', context)
 

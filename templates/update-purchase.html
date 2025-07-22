@@ -73,33 +73,39 @@
                                         <span> Status: <span class="badge bg-success"> Active </span></span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="card-body">
                                     <div class="row">
                                         {% if order.purchase_confirmation == True %}
                                         <div class="col-md-6">
-                                <span class="badge bg-success">Cannot add More Items in This purchase</span>
+                                            <span class="badge bg-success">Cannot add More Items in This purchase</span>
                                         </div>
-                                {% else %}
+                                        {% else %}
                                         <div class="col-md-6">
                                             <label for="">Select Item </label>
-                                            <span class="text-right" style="float: right;"><a
+                                            <!-- <span class="text-right" style="float: right;"><a
                                                     href="{%url 'add_inventory' %}"
-                                                    target="_blank">Add-Inventory</a></span>
+                                                    target="_blank">Add-Inventory</a></span> -->
+                                            <span class="text-right" style="float: right;">
+                                                <a href="" data-bs-target="#inventoryAdd" data-bs-toggle="modal"
+                                                    >Add Inventory</a>
+                                            </span>
                                             <input type="text" class="form-control" name="inventory" required
                                                 id="InventoryInput" placeholder="Select Inventory">
                                         </div>
-                                         {% endif %}
+                                        {% endif %}
                                         <div class="col-md-6">
                                             <label for="">Select Supplier </label>
-                                            <span class="text-right" style="float: right;"><a
-                                                    href="{%url 'add_vendor' %}" target="_blank">Add-Supplier</a></span>
+                                            <!-- <span class="text-right" style="float: right;"><a
+                                                    href="{%url 'add_vendor' %}" target="_blank">Add-Supplier</a></span> -->
+                                                    <span class="text-right" style="float: right;"><a
+                                                    href="" data-bs-target="#addSupplier" data-bs-toggle="modal">Add-Supplier</a></span>
                                             <input type="text" id="supplierInput" class="form-control" name="supplier"
                                                 placeholder="Supplier">
                                         </div>
                                     </div>
                                 </div>
-                               
+
 
                             </div>
                             <div class="card mt-5"
@@ -118,6 +124,193 @@
         </div>
     </div>
 </section>
+
+
+<!-- Modal inventory -->
+<div class="modal fade" id="inventoryAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Inventory Add </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+                                <form action="{%url 'add_inventory_form_purchase' order.id %}" method="post">
+                                    {% csrf_token %}
+
+            <div class="modal-body">
+
+                  <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                {% csrf_token %}
+                                <input type="hidden" id="inventory_id" name="inventory_id">
+                                <input type="hidden" id="form_method" name="form_method" value="add">
+                                
+                                <!-- Product Name -->
+                                <label for="productName" class="form-label">
+                                    <i class="bi bi-file-earmark-bar-graph"></i> Product Name
+                                </label>
+                                {{ form.name }}
+                                
+                                <!-- Brand Name -->
+                                <label for="brandName" class="form-label mt-3">
+                                    <i class="bi bi-apple"></i> Brand Name
+                                </label>
+                                {{ form.brand_name }}
+                                
+                                <!-- Base Product -->
+                                <label for="baseProduct" class="form-label mt-3">
+                                    <i class="bi bi-box-seam"></i> Base Product
+                                </label>
+                                {{ form.base_product }}
+
+                                <!-- Value of Item -->
+                                <label for="value" class="form-label mt-3">
+                                   <i class="bi bi-memory"></i> Value of Item
+                                </label>
+                                {{ form.value }}
+
+                                <!-- Rate of Purchase -->
+                                <label for="rateOfPurchase" class="form-label mt-3">
+                                    <i class="bi bi-cash-coin"></i> Rate of Purchase
+                                </label>
+                                {{ form.rate_of_purchase }}
+
+                                <!-- Stock Quantity -->
+                                <label for="stockQty" class="form-label mt-3">
+                                    <i class="bi bi-123"></i> Stock Quantity
+                                </label>
+                                {{ form.stock }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success" >Submit</button>
+                
+            </div>
+                                </form>
+        </div>
+    </div>
+</div>
+
+<!-- modal supplier  -->
+
+<div class="modal fade" id="addSupplier" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Supplier Add </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                 <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Add Supplier</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="{% url 'add_vendor_form_purchase' order.id %}" data-toggle="validator">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Name *</label>
+                                            <input type="text" class="form-control" placeholder="Enter Name" required
+                                                name="name">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Email *</label>
+                                            <input type="email" class="form-control" placeholder="Enter Email" required
+                                                name="email">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Phone Number *</label>
+                                            <input type="text" class="form-control" placeholder="Enter Phone Number"
+                                                required name="phone">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Supply Products *</label>
+                                            <input type="hidden" class="form-control" placeholder="Enter GST Number"
+                                                 name="gst_number">
+                                            <input type="text" class="form-control" placeholder="Supply Products"
+                                                required name="supply_product">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Address</label>
+                                            <textarea class="form-control" rows="4" name="contact_info"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>City *</label>
+                                            <input type="text" class="form-control" placeholder="Enter City" name="city"
+                                                >
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>State *</label>
+                                            <input type="text" class="form-control" placeholder="Enter State"
+                                                name="state" >
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Country *</label>
+                                            <input type="text" class="form-control" placeholder="Enter Country"
+                                                name="country" >
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Pincode *</label>
+                                            <input type="text" class="form-control" placeholder="Enter Pincode"
+                                                name="pincode" >
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary mr-2">Add Supplier</button>
+                                <button type="reset" class="btn btn-danger">Reset</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="{%static 'assets/js/app.js' %}"></script>
 <script src="{%static 'assets/js/jquery-3.6.0.min.js' %}"></script>
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->

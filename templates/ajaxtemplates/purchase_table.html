@@ -15,11 +15,11 @@
     <tr>
         <td>{{item.inventory}}</td>
         <td>
-            <input type="text" class="form-control" value="{{item.unit_price}}" name="unit_price" id="unit_price"
+            <input type="text" class="form-control" value="{{item.unit_price}}" {% if order.purchase_confirmation %} disabled {% endif %} name="unit_price" id="unit_price"
                 required>
         </td>
         <td>
-            <input type="text" class="form-control" value="{{item.quantity}}" name="quantity" id="quantity" required>
+            <input type="text" class="form-control" value="{{item.quantity}}"  {% if order.purchase_confirmation %} disabled {% endif %} name="quantity" id="quantity" required>
 
         </td>
         <td>
@@ -40,7 +40,7 @@
 </table>
  <div class="item text-center mb-3">
         <!-- <button onclick="makeExpense()" class="btn btn-primary">Update Payments</button> -->
-        <a href="{% url 'update_data_on_purchase' order.id  %}" class="btn btn-primary">Update data</a>
+        <a href="{% url 'update_data_on_purchase' order.id  %}" class="btn btn-primary">Confirm To Inventory</a>
     </div>
 
 <div class="card mt-2" style="box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px;overflow: auto;">
