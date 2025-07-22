@@ -1,4 +1,4 @@
-# yourapp/context_processors.py
+# home/context_processors.py
 
 from .models import Notification  # Replace with your actual app name
 

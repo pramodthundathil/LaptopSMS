@@ -9,7 +9,7 @@
 
 <style>
     .category-add-list {
-        width: 80% !important;
+        width: 100% !important;
         margin: auto;
 
     }
@@ -61,20 +61,26 @@
                                     </div>
                                 </div>
                                 <div class="card-header d-flex justify-content-between">
-                                    <div>
+                                    <!-- <div>
                                         {% if order.purchase_confirmation == False %}
                                         <button onclick="makeExpense()" class="btn btn-outline-secondary btn-sm">Confirm
                                             Purchase</button>
                                         {% else %}
                                         <span class="text-info h6">The Purchase is Completed</span>
                                         {% endif %}
-                                    </div>
+                                    </div> -->
                                     <div>
                                         <span> Status: <span class="badge bg-success"> Active </span></span>
                                     </div>
                                 </div>
+                                
                                 <div class="card-body">
                                     <div class="row">
+                                        {% if order.purchase_confirmation == True %}
+                                        <div class="col-md-6">
+                                <span class="badge bg-success">Cannot add More Items in This purchase</span>
+                                        </div>
+                                {% else %}
                                         <div class="col-md-6">
                                             <label for="">Select Item </label>
                                             <span class="text-right" style="float: right;"><a
@@ -83,6 +89,7 @@
                                             <input type="text" class="form-control" name="inventory" required
                                                 id="InventoryInput" placeholder="Select Inventory">
                                         </div>
+                                         {% endif %}
                                         <div class="col-md-6">
                                             <label for="">Select Supplier </label>
                                             <span class="text-right" style="float: right;"><a
@@ -92,12 +99,13 @@
                                         </div>
                                     </div>
                                 </div>
+                               
 
                             </div>
                             <div class="card mt-5"
                                 style="box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;">
 
-                                <div class="card-body" id="orderItemsTable">
+                                <div class="card-body" id="orderItemsTable" style="overflow: scroll;">
                                     {% include 'ajaxtemplates/purchase_table.html'%}
 
                                 </div>

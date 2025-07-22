@@ -85,11 +85,13 @@ urlpatterns =[
     path("add_bill_discount_to_purchase/<int:pk>",views.add_bill_discount_to_purchase,name="add_bill_discount_to_purchase"),
     path("delete_purchase_item/<int:pk>",views.delete_purchase_item,name="delete_purchase_item"),
     path("update_supplier_to_purchase",views.update_supplier_to_purchase,name="update_supplier_to_purchase"),
-
-     # ... your existing URLs
+    path('update_data_on_purchase/<int:pk>',views.update_data_on_purchase,name="update_data_on_purchase"),
+   
     path('vendor/<int:pk>/payments/', views.view_vendor_payments, name='view_vendor_payments'),
     path('payment/make/<int:purchase_id>/', views.make_payment, name='make_payment'),
     path('vendor/<int:vendor_id>/payment-summary/', views.vendor_payment_summary, name='vendor_payment_summary'),
     path('vendor/<int:vendor_id>/payment-history/', views.payment_history, name='payment_history'),
+    path('payment/make/<int:purchase_id>/purchase', views.make_payment_from_purchase, name='make_payment_from_purchase'),
+
 
 ]

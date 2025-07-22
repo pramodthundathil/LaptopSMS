@@ -141,7 +141,7 @@ def signup(request):
                         email=email,
                         first_name=name,
                         password=password,
-                        terms_accepted=terms_accepted
+                       
                     )
                     user.save()
                     messages.success(request, 'Signup Successful..Please login')
@@ -241,6 +241,16 @@ def logout(request):
 # this function checks if user is super user or not
 def is_superuser_or_staff(user):
     return user.is_superuser or user.is_staff
+# Add this debug version temporarily to see what's happening
+
+
+from django.contrib.auth import get_user_model
+from django.conf import settings
+
+print(f"AUTH_USER_MODEL setting: {settings.AUTH_USER_MODEL}")
+User = get_user_model()
+print(f"User model: {User}")
+print(f"User model path: {User.__module__}.{User.__name__}")
 
 @login_required
 def team(request, eid=None):
@@ -265,6 +275,8 @@ def team(request, eid=None):
         
         # Validation
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+        print(empName, empEmail, empMobNo, "-------------------------------")
         
         if not re.match(email_pattern, empEmail):
             messages.error(request, "Please enter a valid email address")
@@ -289,7 +301,8 @@ def team(request, eid=None):
                 return redirect('team')
         
         try:
-            if eid:  # Editing existing employee
+            if eid: 
+                 # Editing existing employee
                 if Team.objects.filter(empEmail=empEmail).exclude(id=eid).exists():
                     messages.error(request, "Employee with this email already exists")
                     return redirect('team')
@@ -297,9 +310,9 @@ def team(request, eid=None):
                 # Update employee
                 employee.empName = empName
                 employee.empEmail = empEmail
-                employee.empMobNo = empMobNo
+                employee.empMobNo = int(empMobNo)
                 employee.empDOB = empDOB
-                employee.salary = salary
+                employee.salary = float(salary)
                 employee.position = position
                 employee.empTerms = empTerms
                 employee.save()
@@ -314,15 +327,31 @@ def team(request, eid=None):
                 messages.success(request, 'Employee updated successfully!')
                 
             else:  # Adding new employee
+                # Check for existing employee email
                 if Team.objects.filter(empEmail=empEmail).exists():
                     messages.error(request, "Employee with this email already exists")
                     return redirect('team')
                 
+                # Debug: Check what User model we're working with
+                print(f"About to create user with model: {User}")
+                print(f"User model manager: {User.objects}")
+                
+                # Check for existing user email/username
                 if User.objects.filter(username=empEmail).exists():
                     messages.error(request, "This email is already registered")
                     return redirect('team')
                 
-                # Create user
+                # Convert and validate data types
+                try:
+                    mob_no = int(empMobNo)
+                    salary_val = float(salary)
+                except (ValueError, TypeError):
+                    messages.error(request, "Invalid mobile number or salary format")
+                    return redirect('team')
+                
+                print('Creating user with CustomUser model...')
+                
+                # Create user first - using your CustomUserManager
                 user = User.objects.create_user(
                     username=empEmail,
                     email=empEmail,
@@ -330,21 +359,30 @@ def team(request, eid=None):
                     password=password
                 )
                 
+                print(f"User created successfully: {user}")
+                
                 # Create employee
                 employee = Team.objects.create(
                     user=user,
                     empName=empName,
                     empEmail=empEmail,
-                    empMobNo=empMobNo,
+                    empMobNo=mob_no,
                     empDOB=empDOB,
-                    salary=salary,
+                    salary=salary_val,
                     position=position,
                     empTerms=empTerms
                 )
                 
-                messages.success(request, 'Employee added successfully!')
+                print(f"Employee created successfully: {employee}")
+                
+                messages.success(request, f'Employee {empName} added successfully!')
                 
         except Exception as e:
+            # Print the actual error for debugging
+            print(f"Error creating employee: {str(e)}")
+            print(f"Exception type: {type(e)}")
+            import traceback
+            traceback.print_exc()
             messages.error(request, f"Error processing request: {str(e)}")
             return redirect('team')
         
@@ -359,7 +397,6 @@ def team(request, eid=None):
     }
     
     return render(request, 'team.html', context)
-
 
 @login_required
 def inactive_employee(request, eid):
@@ -877,7 +914,7 @@ def notification_mark_read(request,pk):
 from .models import Tax
 from .forms import TaxForm, InventoryForm
 
-@login_required(login_url='signin')
+@login_required
 def AddTax(request):
     if request.method == "POST":
         name = request.POST.get('name')
@@ -888,7 +925,7 @@ def AddTax(request):
         return redirect("ListTax")
     return render(request,"add-tax-slab.html")
 
-@login_required(login_url='signin')
+@login_required
 def ListTax(request):
     tax = Tax.objects.all()
     context = {
@@ -994,7 +1031,7 @@ def generate_invoice_html(request, delivery_id):
     context = {
         'delivery': delivery,
         'invoice_number': invoice_number,
-        'invoice_date': datetime.datetime.now().strftime('%Y-%m-%d'),
+        'invoice_date': datetime.now().strftime('%Y-%m-%d'),
         'total_cost': total_cost,
     }
     
@@ -1215,7 +1252,7 @@ def download_db(request):
 # 
 
 # add a vendor 
-@login_required(login_url='SignIn')
+@login_required
 def add_vendor(request):
     if request.method == "POST":
         name = request.POST['name']
@@ -1247,7 +1284,7 @@ def add_vendor(request):
     return render(request,"add-vendor.html") 
 
 # displaying vendor list 
-@login_required(login_url='SignIn')
+@login_required
 def list_vendor(request):
     vendor = Vendor.objects.all().order_by("-id")
 
@@ -1257,7 +1294,7 @@ def list_vendor(request):
     return render(request,'list-vendors.html',context)
 
 #updating vendor
-@login_required(login_url='SignIn')
+@login_required
 def update_vendor(request, pk):
     vendor = get_object_or_404(Vendor, pk=pk)
     if request.method == 'POST':
@@ -1270,7 +1307,7 @@ def update_vendor(request, pk):
     return render(request, 'vendor_update.html', {'form': form})
 
 # deleting vendor 
-@login_required(login_url='SignIn')
+@login_required
 def delete_vendor(request,pk):
     vendor = Vendor.objects.get(id = pk)
     vendor.delete()
@@ -1287,7 +1324,7 @@ def purchase(request):
     }
     return render(request,'purchase.html',context)
 
-@login_required(login_url='SignIn')
+@login_required
 def add_purchase(request):
     if request.method == "POST":
         purchase_type = request.POST.get("purchase_type")
@@ -1354,7 +1391,7 @@ def delete_bulk_purchase(request):
             messages.warning(request, 'No items were selected for deletion.')
     return redirect("purchase")
 
-@login_required(login_url='SignIn')
+@login_required
 def change_purchase_date(request,pk):
     order = get_object_or_404(Purchase, id= pk)
     if request.method =="POST":
@@ -1418,7 +1455,7 @@ def payment_given_in_expense_purchase(request):
      
     return JsonResponse({"success": False, "error": "Invalid request"})
 
-@login_required(login_url='SignIn')
+@login_required
 @csrf_exempt
 def add_bill_discount_to_purchase(request,pk):
     order = Purchase.objects.get(id = pk)
@@ -1432,7 +1469,7 @@ def add_bill_discount_to_purchase(request,pk):
         return redirect("edit_purchase",pk = pk)   
     
 
-@login_required(login_url='SignIn')
+@login_required
 def add_purchase_item(request,pk):
     purchase_order = get_object_or_404(Purchase, id = pk)
     if request.method == 'POST':
@@ -1452,7 +1489,6 @@ def add_purchase_item(request,pk):
             
             # Update order totals
             order.update_totals()
-            
             # Render the order items table
             order_items_html = render_to_string('ajaxtemplates/purchase_table.html', {'order': order,'total_amount': order.amount})
             return JsonResponse({"success": True, "html": order_items_html})
@@ -1462,7 +1498,32 @@ def add_purchase_item(request,pk):
             return JsonResponse({"success": False, "error": "Product not found"})
     return JsonResponse({"success": False, "error": "Invalid request"})
 
-@login_required(login_url='SignIn')
+@login_required
+def update_data_on_purchase(request, pk):
+    purchase = get_object_or_404(Purchase, id = pk)
+    flag = 0
+    for item in purchase.purchase_bill.all():
+        if item.is_inventory_updated == True:
+            flag = 1
+            continue
+        else:
+            item.inventory.stock += item.quantity
+            item.is_inventory_updated = True
+            item.inventory.save()
+            item.save()
+    purchase.purchase_confirmation = True
+    purchase.save()
+    if flag == 1:
+        messages.success(request,"Purchase added to stock, Some of the purchases are already updated in Inventory ")
+        return redirect("edit_purchase", pk = pk)
+    
+    else:
+        messages.success(request,"New purchase added to stock ")
+        return redirect("edit_purchase", pk = pk)
+    
+
+
+@login_required
 @csrf_exempt
 def update_purchase_item(request, order_id):
     if request.method == "POST":
@@ -1539,7 +1600,7 @@ def update_purchase_payment(request, order_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
-@login_required(login_url='SignIn')
+@login_required
 @csrf_exempt
 def  delete_purchase_item(request,pk):
     if request.method == 'POST':
@@ -1564,7 +1625,7 @@ def  delete_purchase_item(request,pk):
 
     
 
-@login_required(login_url='SignIn')
+@login_required
 @csrf_exempt
 def update_supplier_to_purchase(request):
     if request.method == 'POST':
@@ -1596,48 +1657,63 @@ def delete_bulk_supplier(request):
 
 
 
-
 @login_required
 def view_vendor_payments(request, pk):
     vendor = get_object_or_404(Vendor, id=pk)
     purchases = vendor.purchase_supply.all().order_by('-bill_date')
     
-    # Calculate totals
+    # Calculate totals with proper None handling
     totals = purchases.aggregate(
-        total_amount=Sum('amount') or 0,
-        total_paid=Sum('paid_amount') or 0,
-        total_balance=Sum('balance_amount') or 0,
-        total_discount=Sum('discount') or 0
+        total_amount=Sum('amount'),
+        total_paid=Sum('paid_amount'),
+        total_balance=Sum('balance_amount'),
+        total_discount=Sum('discount')
     )
     
+    # Handle None values from aggregation and convert to Decimal
+    total_amount = Decimal(str(totals['total_amount'] or 0))
+    total_paid = Decimal(str(totals['total_paid'] or 0))
+    total_balance = Decimal(str(totals['total_balance'] or 0))
+    total_discount = Decimal(str(totals['total_discount'] or 0))
+    
     # Calculate gross amount (amount + discount)
-    total_gross = totals['total_amount'] + totals['total_discount']
-    net_amount = totals['total_amount']  # This is already after discount
+    total_gross = total_amount + total_discount
+    net_amount = total_amount  # This is already after discount
     
     # Add gross_amount and discount_percent to each purchase for display
     for purchase in purchases:
-        purchase.gross_amount = purchase.amount + (purchase.discount or 0)
+        # Handle None values and convert to Decimal for consistent calculations
+        purchase_amount = Decimal(str(purchase.amount or 0))
+        purchase_discount = Decimal(str(purchase.discount or 0))
+        
+        purchase.gross_amount = purchase_amount + purchase_discount
+        
         if purchase.gross_amount > 0:
-            purchase.discount_percent = ((purchase.discount or 0) / purchase.gross_amount) * 100
+            purchase.discount_percent = (purchase_discount / purchase.gross_amount) * 100
         else:
-            purchase.discount_percent = 0
+            purchase.discount_percent = Decimal('0')
     
-    # Get payment history for this vendor
-    payment_transactions = PaymentTransaction.objects.filter(vendor=vendor).order_by('-payment_date')[:20]
+    # Get payment history for this vendor with error handling
+    try:
+        payment_transactions = PaymentTransaction.objects.filter(
+            vendor=vendor
+        ).order_by('-payment_date')[:20]
+    except Exception:
+        # Handle case where PaymentTransaction model might not exist or other errors
+        payment_transactions = []
     
     context = {
         "vendor": vendor,
         "purchase": purchases,
-        "total_amount": totals['total_amount'],
-        "total_paid": totals['total_paid'],
-        "total_balance": totals['total_balance'],
-        "total_discount": totals['total_discount'],
+        "total_amount": total_amount,
+        "total_paid": total_paid,
+        "total_balance": total_balance,
+        "total_discount": total_discount,
         "total_gross": total_gross,
         "net_amount": net_amount,
         "payment_transactions": payment_transactions,
     }
     return render(request, 'vendor-payment.html', context)
-
 
 @login_required
 def make_payment(request, purchase_id):
@@ -1676,7 +1752,6 @@ def make_payment(request, purchase_id):
                     payment_method=payment_method,
                     reference_number=reference_number,
                     notes=notes,
-                    created_by=request.user
                 )
                 
                 # Update purchase payment details
@@ -1686,11 +1761,65 @@ def make_payment(request, purchase_id):
             messages.success(request, f'Payment of ₹{payment_amount:.2f} recorded successfully.')
             
         except ValueError:
-            messages.error(request, 'Invalid payment amount.')
+            messages.error(request, f'Invalid payment amount.{str(ValueError)}')
         except Exception as e:
             messages.error(request, f'Error processing payment: {str(e)}')
     
     return redirect('view_vendor_payments', pk=purchase.supplier.id)
+
+def make_payment_from_purchase(request,  purchase_id):
+    if request.method == 'POST':
+        purchase = get_object_or_404(Purchase, id=purchase_id)
+        if not purchase.supplier:
+            messages.info(request, "Supper not added")
+            return redirect("edit_purchase", pk = purchase_id)
+
+        
+        try:
+            payment_amount = float(request.POST.get('payment_amount', 0))
+            payment_date = request.POST.get('payment_date')
+            payment_method = request.POST.get('payment_method')
+            reference_number = request.POST.get('reference_number', '')
+            notes = request.POST.get('notes', '')
+            payment_type = request.POST.get('payment_type')  # 'full' or 'partial'
+            
+            # Validation
+            if payment_amount <= 0:
+                messages.error(request, 'Payment amount must be greater than zero.')
+                return redirect('view_vendor_payments', pk=purchase.supplier.id)
+            
+            if payment_amount > purchase.balance_amount:
+                messages.error(request, 'Payment amount cannot exceed the balance amount.')
+                return redirect('view_vendor_payments', pk=purchase.supplier.id)
+            
+            # For full payment, ensure we pay the exact balance
+            if payment_type == 'full':
+                payment_amount = purchase.balance_amount
+            
+            # Create payment transaction record
+            with transaction.atomic():
+                # Create payment transaction
+                PaymentTransaction.objects.create(
+                    purchase=purchase,
+                    vendor=purchase.supplier,
+                    amount=payment_amount,
+                    payment_date=payment_date,
+                    payment_method=payment_method,
+                    reference_number=reference_number,
+                    notes=notes,
+                )
+                
+                # Update purchase payment details
+                purchase.paid_amount += payment_amount
+                purchase.save()  # This will automatically update balance_amount and payment_status
+                
+            messages.success(request, f'Payment of ₹{payment_amount:.2f} recorded successfully.')
+            
+        except ValueError:
+            messages.error(request, f'Invalid payment amount.{str(ValueError)}')
+        except Exception as e:
+            messages.error(request, f'Error processing payment: {str(e)}')
+    return redirect("edit_purchase", pk = purchase_id)
 
 @login_required
 def vendor_payment_summary(request, vendor_id):

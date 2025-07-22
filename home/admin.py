@@ -1,10 +1,7 @@
 from django.contrib import admin
 from .models import User, Customer, ProductInward, Team, Service, Delivery, Revenue
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'terms_accepted', 'is_superuser')
-    search_fields = ('username', 'email')
-    list_filter = ('is_superuser', 'terms_accepted')
+
 
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('customerName', 'customerEmail', 'customerMobNo', 'customerAddress')
@@ -35,7 +32,7 @@ class RevenueAdmin(admin.ModelAdmin):
     search_fields = ('date',)
     list_filter = ('date',)
 
-admin.site.register(User, UserAdmin)
+
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(ProductInward, ProductInwardAdmin)
 admin.site.register(Team, TeamAdmin)

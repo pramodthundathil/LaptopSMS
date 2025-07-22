@@ -2,17 +2,123 @@ from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 import random
 import string
-
 from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth import get_user_model 
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.conf import settings
 
-class User(AbstractUser):
-    terms_accepted = models.BooleanField(default=True)
-    profile_img = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+# class CustomUserManager(BaseUserManager):
+#     def create_user(self, username, password=None, **extra_fields):
+#         if not username:
+#             raise ValueError('The Email field must be set')
+#         username = self.username
+#         user = self.model(username=username, **extra_fields)
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
+
+#     def create_superuser(self, username, password=None, **extra_fields):
+#         extra_fields.setdefault('is_staff', True)
+#         extra_fields.setdefault('is_superuser', True)
+
+#         if extra_fields.get('is_staff') is not True:
+#             raise ValueError('Superuser must have is_staff=True.')
+#         if extra_fields.get('is_superuser') is not True:
+#             raise ValueError('Superuser must have is_superuser=True.')
+
+#         return self.create_user(username, password, **extra_fields)
+
+# class CustomUser(AbstractUser):
+#     terms_accepted = models.BooleanField(default=True)
+#     profile_img = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+#     objects = CustomUserManager()
     
+#     def __str__(self):
+#         return self.username
+    
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('The Email field must be set')
+        username = self.normalize_email(username)
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(username, password, **extra_fields)
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True, verbose_name='email address')
+    username = models.CharField(max_length=30, unique=True,verbose_name='username')
+    first_name = models.CharField(max_length=30, blank=True, verbose_name='first name')
+    last_name = models.CharField(max_length=30, blank=True, verbose_name='last name')
+    is_active = models.BooleanField(default=True, verbose_name='active')
+    is_staff = models.BooleanField(default=False, verbose_name='staff status')
+    role = models.CharField(max_length=20, 
+                            choices=(
+                                ("user","user"),
+                                ("account","account"),
+                                ("admin","admin"),
+
+                            ),
+                            default='user'
+                            )
+    
+    date_joined = models.DateTimeField(auto_now_add=True, verbose_name='date joined')
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ["first_name", "email"]
+
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+
+        
     def __str__(self):
-        return self.username
+        return str(self.first_name + " " + self.last_name)
+    
+User = get_user_model()
+
+class Team(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    empName = models.CharField(max_length=100)
+    empEmail = models.EmailField()
+    empMobNo = models.BigIntegerField()
+    empDOB = models.DateField()
+    salary = models.FloatField()
+    
+    is_active = models.BooleanField(default=True)
+    
+    position = models.CharField(max_length=30, choices=[
+        ('Laptop Technician', 'Laptop Technician'),
+        ('Computer Technician', 'Computer Technician'),
+        ('Chip-level Technician', 'Chip-level Technician'),
+        ('Manager', 'Manager'),
+        ('HR', 'HR'),
+        ('Other Staff', 'Other Staff')], null=False)
+    empTerms = models.BooleanField(default=False)
+    
+    def delete(self, *args, **kwargs):
+        self.is_active = False
+        self.user.is_active = False
+        self.save()
+        
+    def __str__(self):
+        return str(self.empName) + str(f' ({self.position})')
+    
 
 
 class Brands(models.Model):
@@ -70,34 +176,8 @@ class ProductInward(models.Model):
 
     def __str__(self):
         return self.serialNo
+    
 
-class Team(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    empName = models.CharField(max_length=100)
-    empEmail = models.EmailField()
-    empMobNo = models.BigIntegerField()
-    empDOB = models.DateField()
-    salary = models.FloatField()
-    
-    is_active = models.BooleanField(default=True)
-    
-    position = models.CharField(max_length=30, choices=[
-        ('Laptop Technician', 'Laptop Technician'),
-        ('Computer Technician', 'Computer Technician'),
-        ('Chip-level Technician', 'Chip-level Technician'),
-        ('Manager', 'Manager'),
-        ('HR', 'HR'),
-        ('Other Staff', 'Other Staff')], null=False)
-    empTerms = models.BooleanField(default=False)
-    
-    def delete(self, *args, **kwargs):
-        self.is_active = False
-        self.user.is_active = False
-        self.save()
-        
-    def __str__(self):
-        return str(self.empName) + str(f' ({self.position})')
-    
 #Service model
 class Service(models.Model):
     service_id = models.CharField(max_length=7, unique=True, editable=False)
@@ -341,6 +421,7 @@ class PurchaseItems(models.Model):
     unit_price = models.FloatField(default=0)
     discount = models.FloatField(default=0)  # Per item discount
     total_price = models.FloatField(editable=False)
+    is_inventory_updated = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
         # Calculate total price with discount
